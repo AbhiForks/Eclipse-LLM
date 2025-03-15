@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "@/components/Sidebar";
@@ -14,7 +15,7 @@ const newsItems = [
   {
     id: 1,
     title: "Meta Maneuvers to Block Tell-All Document Release",
-    description: "According to reports, Meta has launched aggressive legal measures to block former employee Sarah Wynn-Williams from promoting her memoir "Careless People."",
+    description: "According to reports, Meta has launched aggressive legal measures to block former employee Sarah Wynn-Williams from promoting her memoir 'Careless People.'",
     source: "Tech News Daily",
     imageUrl: "https://placehold.co/400x200/3a1c71/ffffff?text=Meta",
     date: "2 hours ago",
