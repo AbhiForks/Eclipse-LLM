@@ -11,6 +11,7 @@ import Loading from "./pages/Loading";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { ChatProvider } from "./context/ChatContext";
+import Discover from "./pages/Discover";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
                 <Index />
               </ChatProvider>
             } />
+            <Route path="/discover" element={<Discover />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
