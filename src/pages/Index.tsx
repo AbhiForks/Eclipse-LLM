@@ -1,7 +1,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ChatProvider, useChat } from "@/context/ChatContext";
+import { useChat } from "@/context/ChatContext";
 import Sidebar from "@/components/Sidebar";
 import ChatHeader from "@/components/ChatHeader";
 import ChatMessage from "@/components/ChatMessage";
@@ -67,7 +67,7 @@ const WelcomeScreen = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        DeepSeek
+        Eclipse
       </motion.h1>
       
       <motion.p
@@ -129,14 +129,12 @@ const SuggestionCard = ({ icon, title, description }: {
 // Main layout component that wraps everything
 const Index = () => {
   return (
-    <ChatProvider>
-      <div className="flex min-h-screen w-full bg-background text-foreground">
-        <Sidebar />
-        <main className="flex-1 overflow-hidden">
-          <ChatUI />
-        </main>
-      </div>
-    </ChatProvider>
+    <div className="flex min-h-screen w-full bg-background text-foreground">
+      <Sidebar />
+      <main className="flex-1 overflow-hidden">
+        <ChatUI />
+      </main>
+    </div>
   );
 };
 

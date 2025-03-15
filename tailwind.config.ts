@@ -141,6 +141,10 @@ export default {
 				'blink-caret': {
 					'0%, 100%': { borderColor: 'transparent' },
 					'50%': { borderColor: 'hsl(var(--primary))' }
+				},
+				'orbit': {
+					'0%': { transform: 'rotate(0deg) translateX(10px) rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg) translateX(10px) rotate(-360deg)' }
 				}
 			},
 			animation: {
@@ -155,13 +159,14 @@ export default {
 				'scale-up': 'scale-up 0.3s ease-out',
 				'float': 'float 6s ease-in-out infinite',
 				'typing': 'typing 3.5s steps(40, end)',
-				'blink-caret': 'blink-caret 0.75s step-end infinite'
+				'blink-caret': 'blink-caret 0.75s step-end infinite',
+				'orbit': 'orbit 8s linear infinite'
 			},
 			backgroundImage: {
 				'gradient-cosmic': 'linear-gradient(to bottom right, #2B5EB8, #6E59A5)',
-				'gradient-cosmic-alt': 'linear-gradient(to bottom right, #4D8BF5, #8B5CF6)',
+				'gradient-cosmic-alt': 'linear-gradient(to bottom right, #8B5CF6, #D946EF)',
 				'gradient-cosmic-dark': 'linear-gradient(to bottom right, #1A1F2C, #403E43)',
-				'gradient-glow': 'radial-gradient(circle, rgba(77, 139, 245, 0.3) 0%, rgba(26, 31, 44, 0) 70%)',
+				'gradient-glow': 'radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(26, 31, 44, 0) 70%)',
 				'shimmer-effect': 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%)'
 			}
 		}

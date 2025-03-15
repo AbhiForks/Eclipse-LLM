@@ -1,12 +1,25 @@
 
 import { useState } from "react";
-import { Menu, Plus, MessagesSquare, Settings, LogOut } from "lucide-react";
+import { Menu, Plus, MessagesSquare, Settings, LogOut, User } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
+import { useToast } from "@/hooks/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { conversations, currentConversation, createNewConversation, setCurrentConversation } = useChat();
+  const { toast } = useToast();
+  
+  const handleSignOut = () => {
+    // In a real app, this would log the user out
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully",
+    });
+  };
 
   return (
     <div 
@@ -60,6 +73,16 @@ const Sidebar = () => {
       </div>
       
       <div className="p-2 border-t border-border/20 space-y-1">
+        <Link to="/login">
+          <button 
+            className={`flex items-center ${
+              isCollapsed ? "justify-center" : "justify-start"
+            } w-full gap-2 p-2 rounded-lg hover:bg-sidebar-accent/50 text-sidebar-foreground/80 transition-all duration-200`}
+          >
+            <User size={18} />
+            {!isCollapsed && <span>Account</span>}
+          </button>
+        </Link>
         <button 
           className={`flex items-center ${
             isCollapsed ? "justify-center" : "justify-start"
@@ -68,14 +91,23 @@ const Sidebar = () => {
           <Settings size={18} />
           {!isCollapsed && <span>Settings</span>}
         </button>
-        <button 
-          className={`flex items-center ${
-            isCollapsed ? "justify-center" : "justify-start"
-          } w-full gap-2 p-2 rounded-lg hover:bg-sidebar-accent/50 text-sidebar-foreground/80 transition-all duration-200`}
-        >
-          <LogOut size={18} />
-          {!isCollapsed && <span>Sign Out</span>}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button 
+              className={`flex items-center ${
+                isCollapsed ? "justify-center" : "justify-start"
+              } w-full gap-2 p-2 rounded-lg hover:bg-sidebar-accent/50 text-sidebar-foreground/80 transition-all duration-200`}
+            >
+              <LogOut size={18} />
+              {!isCollapsed && <span>Sign Out</span>}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" align="start">
+            <DropdownMenuItem onClick={handleSignOut}>
+              Confirm Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

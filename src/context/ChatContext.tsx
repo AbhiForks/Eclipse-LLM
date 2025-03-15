@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Types for our messages and context
 export type MessageRole = "user" | "assistant" | "system";
@@ -28,6 +29,9 @@ interface ChatContextType {
   setCurrentConversation: (id: string) => void;
   sendMessage: (content: string) => Promise<void>;
   generateResponse: (message: Message) => Promise<void>;
+  renameConversation: (id: string, newTitle: string) => void;
+  deleteConversation: (id: string) => void;
+  shareConversation: (id: string) => void;
 }
 
 // Create the context
@@ -43,13 +47,13 @@ const mockGenerateResponse = async (message: string): Promise<string> => {
   
   // Mock responses based on message content
   if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
-    return "👋 Hello! I'm DeepSeek, your AI assistant. How can I help you today?";
+    return "👋 Hello! I'm Eclipse, your AI assistant. How can I help you today?";
   } else if (message.toLowerCase().includes("help")) {
     return "I'd be happy to help! I can answer questions, provide information, assist with tasks, or just chat. What do you need assistance with?";
   } else if (message.toLowerCase().includes("feature") || message.toLowerCase().includes("do")) {
     return "I can help with a wide range of tasks including answering questions, writing and editing text, translating languages, summarizing content, creative writing, code assistance, and much more. Is there something specific you're looking for?";
   } else {
-    return "Thanks for your message. I'm an AI assistant here to help you with information, tasks, or just conversation. Feel free to ask me anything!";
+    return "Thanks for your message. I'm Eclipse, an AI assistant here to help you with information, tasks, or just conversation. Feel free to ask me anything!";
   }
 };
 
@@ -58,6 +62,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversationState] = useState<Conversation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
 
   // Initialize with a default conversation
   useEffect(() => {
@@ -69,7 +74,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           {
             id: generateId(),
             role: "assistant",
-            content: "Hi, I'm DeepSeek.\n\nHow can I help you today?",
+            content: "Hi, I'm Eclipse.\n\nHow can I help you today?",
             timestamp: new Date(),
           },
         ],
@@ -90,7 +95,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         {
           id: generateId(),
           role: "assistant",
-          content: "Hi, I'm DeepSeek.\n\nHow can I help you today?",
+          content: "Hi, I'm Eclipse.\n\nHow can I help you today?",
           timestamp: new Date(),
         },
       ],
@@ -108,6 +113,68 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setCurrentConversationState(conversation);
     }
   }, [conversations]);
+
+  // Rename conversation
+  const renameConversation = useCallback((id: string, newTitle: string) => {
+    if (!newTitle.trim()) {
+      toast({
+        title: "Error",
+        description: "Conversation title cannot be empty",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setConversations(prevConversations => 
+      prevConversations.map(conv => 
+        conv.id === id 
+          ? { ...conv, title: newTitle, updatedAt: new Date() } 
+          : conv
+      )
+    );
+    
+    if (currentConversation?.id === id) {
+      setCurrentConversationState(prev => 
+        prev ? { ...prev, title: newTitle, updatedAt: new Date() } : prev
+      );
+    }
+    
+    toast({
+      title: "Conversation renamed",
+      description: `Conversation renamed to "${newTitle}"`,
+    });
+  }, [currentConversation, toast]);
+
+  // Delete conversation
+  const deleteConversation = useCallback((id: string) => {
+    setConversations(prevConversations => 
+      prevConversations.filter(conv => conv.id !== id)
+    );
+    
+    if (currentConversation?.id === id) {
+      const remainingConversations = conversations.filter(conv => conv.id !== id);
+      if (remainingConversations.length > 0) {
+        setCurrentConversationState(remainingConversations[0]);
+      } else {
+        createNewConversation();
+      }
+    }
+    
+    toast({
+      title: "Conversation deleted",
+      description: "The conversation has been removed",
+    });
+  }, [currentConversation, conversations, createNewConversation, toast]);
+
+  // Share conversation
+  const shareConversation = useCallback((id: string) => {
+    // In a real app, this would generate a shareable link or open a modal
+    // For demo purposes, we'll just show a toast
+    toast({
+      title: "Conversation shared",
+      description: "A shareable link has been copied to your clipboard",
+    });
+  }, [toast]);
 
   // Send a new message
   const sendMessage = useCallback(async (content: string) => {
@@ -223,6 +290,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentConversation,
     sendMessage,
     generateResponse,
+    renameConversation,
+    deleteConversation,
+    shareConversation,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
