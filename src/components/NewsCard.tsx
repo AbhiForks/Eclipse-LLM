@@ -27,14 +27,15 @@ const NewsCard: FC<NewsCardProps> = ({
     <motion.div
       whileHover={{ y: -5 }}
       whileTap={{ scale: 0.98 }}
-      className="relative flex flex-col overflow-hidden rounded-xl bg-card/70 border border-border/30 shadow-md transition-all duration-300 cursor-pointer h-full"
+      className="relative flex flex-col overflow-hidden rounded-xl bg-[#1e1e1e] border border-[#333333] shadow-md transition-all duration-300 cursor-pointer h-full"
       onClick={onClick}
     >
       {imageUrl && (
         <div className="w-full h-32 overflow-hidden">
-          <div 
-            className="w-full h-full bg-cover bg-center" 
-            style={{ backgroundImage: `url(${imageUrl})` }}
+          <img 
+            src={imageUrl}
+            alt={title}
+            className="w-full h-full object-cover"
           />
         </div>
       )}
@@ -43,22 +44,22 @@ const NewsCard: FC<NewsCardProps> = ({
         <h3 className="text-base font-medium line-clamp-2 mb-2 text-white/90">{title}</h3>
         
         {description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{description}</p>
+          <p className="text-sm text-gray-400 line-clamp-2 mb-3">{description}</p>
         )}
         
         <div className="mt-auto flex items-center justify-between">
           <div>
-            {source && <p className="text-xs text-primary">{source}</p>}
-            {date && <p className="text-xs text-muted-foreground">{date}</p>}
+            {source && <p className="text-xs text-[#d946ef]">{source}</p>}
+            {date && <p className="text-xs text-gray-500">{date}</p>}
           </div>
           
           {hasActions && (
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-primary/20">
-                <Bookmark size={14} className="text-primary" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-[#d946ef]/20">
+                <Bookmark size={14} className="text-[#d946ef]" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-primary/20">
-                <ExternalLink size={14} className="text-primary" />
+              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-[#d946ef]/20">
+                <ExternalLink size={14} className="text-[#d946ef]" />
               </Button>
             </div>
           )}
@@ -66,7 +67,7 @@ const NewsCard: FC<NewsCardProps> = ({
       </div>
       
       <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-500/10 opacity-0"
+        className="absolute inset-0 bg-gradient-to-r from-[#d946ef]/10 to-transparent opacity-0"
         whileHover={{ opacity: 0.5 }}
         transition={{ duration: 0.3 }}
       />

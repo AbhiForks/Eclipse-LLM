@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Plus, Home, Globe, LibraryBig, Settings, LogOut, User, Trash2, Menu } from "lucide-react";
+import { Home, Globe, Library, Settings, User, Plus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
@@ -28,19 +28,19 @@ const Sidebar = () => {
   const navItems = [
     { icon: Home, label: "Home", path: "/" },
     { icon: Globe, label: "Discover", path: "/discover" },
-    { icon: LibraryBig, label: "Library", path: "/library" },
+    { icon: Library, label: "Library", path: "/library" },
   ];
 
   // Vertical sidebar for desktop
   const renderDesktopSidebar = () => (
-    <div className={`fixed left-0 top-0 bottom-0 bg-sidebar flex flex-col items-center py-4 z-50 transition-all duration-300 ${isCollapsed ? "w-16" : "w-16"}`}>
+    <div className="fixed left-0 top-0 bottom-0 bg-[#121212] flex flex-col items-center py-4 z-50 transition-all duration-300 w-16">
       <div className="mb-8">
         <Logo variant="minimal" size={32} />
       </div>
       
       <Button 
         onClick={createNewConversation}
-        className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mb-8"
+        className="w-10 h-10 bg-[#d946ef] rounded-full flex items-center justify-center mb-8"
       >
         <Plus size={20} />
       </Button>
@@ -50,18 +50,22 @@ const Sidebar = () => {
           <Link 
             key={item.label}
             to={item.path}
-            className={`p-2 rounded-lg ${location.pathname === item.path ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-white hover:bg-muted/30"} transition-colors`}
+            className={`p-2 rounded-lg ${
+              location.pathname === item.path 
+                ? "text-[#d946ef]" 
+                : "text-gray-400 hover:text-white"
+            } transition-colors`}
           >
             <item.icon size={20} />
           </Link>
         ))}
       </div>
       
-      <div className="mt-auto flex flex-col items-center gap-4">
-        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-muted-foreground hover:text-white hover:bg-muted/30">
+      <div className="mt-auto flex flex-col items-center gap-4 pb-4">
+        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-gray-400 hover:text-white">
           <User size={20} />
         </Button>
-        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-muted-foreground hover:text-white hover:bg-muted/30">
+        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-gray-400 hover:text-white">
           <Settings size={20} />
         </Button>
       </div>
@@ -89,7 +93,7 @@ const Sidebar = () => {
           onClick={() => setShowMobileMenu(false)}
         >
           <motion.div 
-            className="absolute left-0 top-0 bottom-0 w-64 bg-sidebar p-4"
+            className="absolute left-0 top-0 bottom-0 w-64 bg-[#121212] p-4"
             initial={{ x: -300 }}
             animate={{ x: 0 }}
             exit={{ x: -300 }}
@@ -104,7 +108,7 @@ const Sidebar = () => {
                 createNewConversation();
                 setShowMobileMenu(false);
               }}
-              className="w-full flex items-center gap-2 mb-6 bg-gradient-to-r from-pink-500 to-purple-600"
+              className="w-full flex items-center gap-2 mb-6 bg-[#d946ef]"
             >
               <Plus size={18} />
               <span>New Chat</span>
@@ -117,8 +121,8 @@ const Sidebar = () => {
                   to={item.path}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
                     location.pathname === item.path 
-                      ? "bg-primary/20 text-primary" 
-                      : "text-muted-foreground hover:text-white hover:bg-muted/30"
+                      ? "text-[#d946ef]" 
+                      : "text-gray-400 hover:text-white"
                   } transition-colors`}
                   onClick={() => setShowMobileMenu(false)}
                 >
@@ -131,26 +135,17 @@ const Sidebar = () => {
             <div className="absolute bottom-4 left-4 right-4 space-y-1">
               <Button 
                 variant="ghost" 
-                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white" 
-                onClick={handleSignOut}
+                className="w-full flex items-center justify-start gap-3 text-gray-400 hover:text-white" 
               >
                 <User size={18} />
                 <span>Account</span>
               </Button>
               <Button 
                 variant="ghost" 
-                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white"
+                className="w-full flex items-center justify-start gap-3 text-gray-400 hover:text-white"
               >
                 <Settings size={18} />
                 <span>Settings</span>
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white" 
-                onClick={handleSignOut}
-              >
-                <LogOut size={18} />
-                <span>Sign Out</span>
               </Button>
             </div>
           </motion.div>
