@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "@/components/Sidebar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Globe, Zap, DollarSign, Newspaper, Music, Football, 
+  Globe, Zap, DollarSign, Newspaper, Music, Trophy, 
   ChevronRight, BookOpen, Bookmark, ThumbsUp
 } from "lucide-react";
 import NewsCard from "@/components/NewsCard";
@@ -75,7 +74,7 @@ const categories = [
   { id: "tech", label: "Tech & Science", icon: <Globe size={16} /> },
   { id: "finance", label: "Finance", icon: <DollarSign size={16} /> },
   { id: "arts", label: "Arts & Culture", icon: <Music size={16} /> },
-  { id: "sports", label: "Sports", icon: <Football size={16} /> }
+  { id: "sports", label: "Sports", icon: <Trophy size={16} /> }
 ];
 
 const Discover = () => {
