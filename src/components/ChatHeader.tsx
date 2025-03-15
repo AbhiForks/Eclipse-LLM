@@ -33,9 +33,10 @@ import { useChat } from "@/context/ChatContext";
 
 interface ChatHeaderProps {
   title?: string;
+  actions?: React.ReactNode; // Add the actions prop to the interface
 }
 
-const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation" }) => {
+const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }) => {
   const { currentConversation, renameConversation, deleteConversation, shareConversation } = useChat();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -68,50 +69,56 @@ const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation" }) => {
         <h1 className="text-lg font-medium">{title}</h1>
       </div>
       <div className="flex items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-              <Pencil size={18} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => {
-              setNewTitle(title);
-              setIsRenameDialogOpen(true);
-            }}>
-              Rename
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="h-9 w-9 text-muted-foreground hover:text-foreground"
-          onClick={handleShare}
-        >
-          <Share2 size={18} />
-        </Button>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-              <Trash2 size={18} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem 
-              className="text-destructive focus:text-destructive"
-              onClick={() => setIsDeleteDialogOpen(true)}
+        {actions ? (
+          actions
+        ) : (
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                  <Pencil size={18} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => {
+                  setNewTitle(title);
+                  setIsRenameDialogOpen(true);
+                }}>
+                  Rename
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              onClick={handleShare}
             >
-              Delete conversation
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
-        <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
-          <Settings size={18} />
-        </Button>
+              <Share2 size={18} />
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                  <Trash2 size={18} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setIsDeleteDialogOpen(true)}
+                >
+                  Delete conversation
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+              <Settings size={18} />
+            </Button>
+          </>
+        )}
       </div>
       
       {/* Rename Dialog */}
