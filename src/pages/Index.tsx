@@ -40,7 +40,7 @@ const newsItems = [
 
 // Main chat UI component
 const ChatUI = () => {
-  const { currentConversation, renameConversation, deleteConversation } = useChat();
+  const { currentConversation, renameConversation, deleteConversation, shareConversation } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -185,28 +185,21 @@ const ChatUI = () => {
 
 // Welcome screen shown for new conversations
 const WelcomeScreen = () => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 gap-8">
       <motion.h1 
-        className="text-4xl font-bold text-gradient"
+        className="text-3xl md:text-4xl font-bold text-gradient"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        Eclipse
+        What do you want to know?
       </motion.h1>
       
-      <motion.p
-        className="text-xl text-center max-w-xl text-purple-300"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        Your personal AI assistant, ready to help with anything you need.
-      </motion.p>
-      
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 w-full max-w-3xl"
+        className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'} gap-4 mt-6 w-full max-w-3xl`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
@@ -280,10 +273,12 @@ const SuggestionCard = ({ icon, title, description }: {
 
 // Main layout component that wraps everything
 const Index = () => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="flex min-h-screen w-full bg-black text-white">
       <Sidebar />
-      <main className="flex-1 overflow-hidden">
+      <main className={`flex-1 overflow-hidden ${isMobile ? 'ml-0' : 'ml-16'}`}>
         <ChatUI />
       </main>
     </div>

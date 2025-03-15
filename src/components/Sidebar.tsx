@@ -1,19 +1,21 @@
 
 import { useState } from "react";
-import { Menu, Plus, MessagesSquare, Settings, LogOut, User, CheckSquare, Trash2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Plus, Home, Globe, LibraryBig, Settings, LogOut, User, Trash2, Menu } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
 import { useToast } from "@/hooks/use-toast";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { conversations, currentConversation, createNewConversation, setCurrentConversation, deleteConversation } = useChat();
   const { toast } = useToast();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const location = useLocation();
+  const isMobile = useIsMobile();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   const handleSignOut = () => {
     // In a real app, this would log the user out
@@ -23,124 +25,144 @@ const Sidebar = () => {
     });
   };
 
-  return (
-    <div 
-      className={`transition-all duration-300 flex flex-col h-screen bg-gradient-to-b from-black to-purple-950/40 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-purple-500/20">
-        {!isCollapsed && <Logo className="ml-2" />}
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)} 
-          className="p-2 rounded-lg hover:bg-purple-900/30 transition-colors duration-200 text-purple-300"
-        >
-          <Menu size={20} />
-        </button>
+  const navItems = [
+    { icon: Home, label: "Home", path: "/" },
+    { icon: Globe, label: "Discover", path: "/discover" },
+    { icon: LibraryBig, label: "Library", path: "/library" },
+  ];
+
+  // Vertical sidebar for desktop
+  const renderDesktopSidebar = () => (
+    <div className={`fixed left-0 top-0 bottom-0 bg-sidebar flex flex-col items-center py-4 z-50 transition-all duration-300 ${isCollapsed ? "w-16" : "w-16"}`}>
+      <div className="mb-8">
+        <Logo variant="minimal" size={32} />
       </div>
       
-      <div className="p-2">
-        <button 
-          onClick={createNewConversation}
-          className={`flex items-center ${
-            isCollapsed ? "justify-center" : "justify-start"
-          } w-full gap-2 p-2 rounded-lg bg-gradient-to-r from-purple-600 to-orange-500 hover:opacity-90 text-white transition-all duration-200`}
-        >
-          <Plus size={20} />
-          {!isCollapsed && <span>New Chat</span>}
-        </button>
-      </div>
+      <Button 
+        onClick={createNewConversation}
+        className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mb-8"
+      >
+        <Plus size={20} />
+      </Button>
       
-      <div className="flex-1 overflow-y-auto scrollbar-none">
-        <div className="p-2 space-y-1">
-          {conversations.map((conversation) => (
-            <div
-              key={conversation.id}
-              className="relative"
-              onMouseEnter={() => setHoveredId(conversation.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <button
-                onClick={() => setCurrentConversation(conversation.id)}
-                className={`w-full flex items-center ${
-                  isCollapsed ? "justify-center" : "justify-start"
-                } gap-2 p-2 rounded-lg truncate transition-all duration-200 ${
-                  currentConversation?.id === conversation.id
-                    ? "bg-purple-900/40 text-white"
-                    : "hover:bg-purple-900/20 text-purple-300"
-                }`}
-              >
-                <MessagesSquare size={18} />
-                {!isCollapsed && (
-                  <span className="truncate">{conversation.title}</span>
-                )}
-              </button>
-              
-              {!isCollapsed && hoveredId === conversation.id && (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1"
-                >
-                  <button
-                    onClick={() => deleteConversation(conversation.id)}
-                    className="p-1 rounded-md text-red-400 hover:bg-red-900/20 transition-colors"
-                    title="Delete conversation"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                  <button
-                    onClick={() => setCurrentConversation(conversation.id)}
-                    className="p-1 rounded-md text-green-400 hover:bg-green-900/20 transition-colors"
-                    title="Select conversation"
-                  >
-                    <CheckSquare size={16} />
-                  </button>
-                </motion.div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="p-2 border-t border-purple-500/20 space-y-1">
-        <Link to="/login">
-          <button 
-            className={`flex items-center ${
-              isCollapsed ? "justify-center" : "justify-start"
-            } w-full gap-2 p-2 rounded-lg hover:bg-purple-900/30 text-purple-300 hover:text-white transition-all duration-200`}
+      <div className="flex-1 flex flex-col items-center gap-8">
+        {navItems.map((item) => (
+          <Link 
+            key={item.label}
+            to={item.path}
+            className={`p-2 rounded-lg ${location.pathname === item.path ? "bg-primary/20 text-primary" : "text-muted-foreground hover:text-white hover:bg-muted/30"} transition-colors`}
           >
-            <User size={18} />
-            {!isCollapsed && <span>Account</span>}
-          </button>
-        </Link>
-        <button 
-          className={`flex items-center ${
-            isCollapsed ? "justify-center" : "justify-start"
-          } w-full gap-2 p-2 rounded-lg hover:bg-purple-900/30 text-purple-300 hover:text-white transition-all duration-200`}
-        >
-          <Settings size={18} />
-          {!isCollapsed && <span>Settings</span>}
-        </button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button 
-              className={`flex items-center ${
-                isCollapsed ? "justify-center" : "justify-start"
-              } w-full gap-2 p-2 rounded-lg hover:bg-purple-900/30 text-purple-300 hover:text-white transition-all duration-200`}
-            >
-              <LogOut size={18} />
-              {!isCollapsed && <span>Sign Out</span>}
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="right" align="start" className="bg-purple-950/90 border border-purple-500/30 text-white backdrop-blur-md">
-            <DropdownMenuItem onClick={handleSignOut} className="hover:bg-purple-900/40 cursor-pointer">
-              Confirm Sign Out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <item.icon size={20} />
+          </Link>
+        ))}
+      </div>
+      
+      <div className="mt-auto flex flex-col items-center gap-4">
+        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-muted-foreground hover:text-white hover:bg-muted/30">
+          <User size={20} />
+        </Button>
+        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-muted-foreground hover:text-white hover:bg-muted/30">
+          <Settings size={20} />
+        </Button>
       </div>
     </div>
+  );
+
+  // Mobile menu button and sheet
+  const renderMobileMenu = () => (
+    <>
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="fixed top-4 left-4 z-50 md:hidden" 
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
+      >
+        <Menu size={24} />
+      </Button>
+      
+      {showMobileMenu && (
+        <motion.div 
+          className="fixed inset-0 bg-black/80 z-40 md:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowMobileMenu(false)}
+        >
+          <motion.div 
+            className="absolute left-0 top-0 bottom-0 w-64 bg-sidebar p-4"
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            exit={{ x: -300 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-4 mb-8">
+              <Logo size={32} />
+            </div>
+            
+            <Button 
+              onClick={() => {
+                createNewConversation();
+                setShowMobileMenu(false);
+              }}
+              className="w-full flex items-center gap-2 mb-6 bg-gradient-to-r from-pink-500 to-purple-600"
+            >
+              <Plus size={18} />
+              <span>New Chat</span>
+            </Button>
+            
+            <div className="space-y-1">
+              {navItems.map((item) => (
+                <Link 
+                  key={item.label}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
+                    location.pathname === item.path 
+                      ? "bg-primary/20 text-primary" 
+                      : "text-muted-foreground hover:text-white hover:bg-muted/30"
+                  } transition-colors`}
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <item.icon size={18} />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+            
+            <div className="absolute bottom-4 left-4 right-4 space-y-1">
+              <Button 
+                variant="ghost" 
+                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white" 
+                onClick={handleSignOut}
+              >
+                <User size={18} />
+                <span>Account</span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white"
+              >
+                <Settings size={18} />
+                <span>Settings</span>
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full flex items-center justify-start gap-3 text-muted-foreground hover:text-white" 
+                onClick={handleSignOut}
+              >
+                <LogOut size={18} />
+                <span>Sign Out</span>
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </>
+  );
+
+  return (
+    <>
+      {isMobile ? renderMobileMenu() : renderDesktopSidebar()}
+    </>
   );
 };
 

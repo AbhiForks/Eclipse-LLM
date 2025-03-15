@@ -17,14 +17,14 @@ const ChatMessage: FC<ChatMessageProps> = ({ message }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`group flex gap-4 p-4 ${isUser ? "bg-cosmic-blue/5" : ""}`}
+      className={`group flex gap-4 p-4 ${isUser ? "bg-primary/5" : ""}`}
     >
       <div className={`flex-shrink-0 mt-1 rounded-full h-8 w-8 flex items-center justify-center
-        ${isUser ? "bg-cosmic-purple/20" : "bg-cosmic-blue/20"}`}>
+        ${isUser ? "bg-primary/20" : "bg-secondary/20"}`}>
         {isUser ? (
-          <User size={18} className="text-cosmic-purple-light" />
+          <User size={16} className="text-primary-light" />
         ) : (
-          <Bot size={18} className="text-cosmic-blue-light" />
+          <Bot size={16} className="text-secondary-light" />
         )}
       </div>
       
@@ -58,7 +58,7 @@ const LoadingMessage = () => {
             duration: 0.6,
             delay: 0,
           }}
-          className="h-2 w-2 rounded-full bg-cosmic-blue"
+          className="h-2 w-2 rounded-full bg-primary"
         />
         <motion.div
           initial={{ scale: 0.8, opacity: 0.3 }}
@@ -69,7 +69,7 @@ const LoadingMessage = () => {
             duration: 0.6,
             delay: 0.2,
           }}
-          className="h-2 w-2 rounded-full bg-cosmic-blue"
+          className="h-2 w-2 rounded-full bg-primary"
         />
         <motion.div
           initial={{ scale: 0.8, opacity: 0.3 }}
@@ -80,7 +80,7 @@ const LoadingMessage = () => {
             duration: 0.6,
             delay: 0.4,
           }}
-          className="h-2 w-2 rounded-full bg-cosmic-blue"
+          className="h-2 w-2 rounded-full bg-primary"
         />
       </div>
     </AnimatePresence>
