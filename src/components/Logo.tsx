@@ -6,14 +6,15 @@ interface LogoProps {
   size?: number;
   className?: string;
   variant?: "default" | "loading" | "minimal";
+  onClick?: () => void;
 }
 
-const Logo: FC<LogoProps> = ({ size = 40, className = "", variant = "default" }) => {
+const Logo: FC<LogoProps> = ({ size = 40, className = "", variant = "default", onClick }) => {
   if (variant === "minimal") {
     return (
-      <div className={`flex items-center justify-center ${className}`}>
+      <div className={`flex items-center justify-center ${className}`} onClick={onClick}>
         <motion.div 
-          className="relative"
+          className="relative cursor-pointer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -43,7 +44,7 @@ const Logo: FC<LogoProps> = ({ size = 40, className = "", variant = "default" })
   }
   
   return (
-    <div className={`flex items-center space-x-2 ${className}`}>
+    <div className={`flex items-center space-x-2 ${className} cursor-pointer`} onClick={onClick}>
       <div 
         className="relative rounded-full overflow-hidden flex items-center justify-center bg-black"
         style={{ width: size, height: size }}

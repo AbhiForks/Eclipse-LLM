@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { ChatProvider } from "./context/ChatContext";
 import Discover from "./pages/Discover";
+import Library from "./pages/Library";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,11 @@ const App = () => (
               </ChatProvider>
             } />
             <Route path="/discover" element={<Discover />} />
+            <Route path="/library" element={
+              <ChatProvider>
+                <Library />
+              </ChatProvider>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

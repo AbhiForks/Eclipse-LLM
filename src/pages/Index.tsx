@@ -7,10 +7,11 @@ import ChatHeader from "@/components/ChatHeader";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import GlowEffect from "@/components/GlowEffect";
-import { CornerDownLeft, Search, Zap, Clock, Share2, Trash2 } from "lucide-react";
+import { CornerDownLeft, Search, Zap, Clock, Share2, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 // Main chat UI component
 const ChatUI = () => {
@@ -20,6 +21,7 @@ const ChatUI = () => {
   const [newTitle, setNewTitle] = useState("");
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   // Auto-scroll to bottom of messages when messages change
   useEffect(() => {
@@ -50,6 +52,7 @@ const ChatUI = () => {
         description: "Your conversation has been removed.",
         variant: "destructive"
       });
+      navigate("/home");
     }
   };
 
@@ -105,27 +108,33 @@ const ChatUI = () => {
             title={currentConversation.title}
             actions={
               <div className="flex items-center gap-2">
-                <button 
+                <Button 
                   onClick={handleRename}
+                  variant="ghost"
+                  size="icon"
                   className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
                   title="Rename conversation"
                 >
-                  <Clock className="h-5 w-5" />
-                </button>
-                <button 
+                  <Edit className="h-5 w-5" />
+                </Button>
+                <Button 
                   onClick={handleShare}
+                  variant="ghost"
+                  size="icon"
                   className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
                   title="Share conversation"
                 >
                   <Share2 className="h-5 w-5" />
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={handleDelete}
+                  variant="ghost"
+                  size="icon"
                   className="p-2 rounded-full hover:bg-red-900/30 transition-colors text-red-400"
                   title="Delete conversation"
                 >
                   <Trash2 className="h-5 w-5" />
-                </button>
+                </Button>
               </div>
             }
           />
