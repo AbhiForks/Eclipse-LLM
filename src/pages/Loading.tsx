@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,7 @@ const LoadingScreen = () => {
       }, 500);
       
       setTimeout(() => {
-        navigate('/chat');
+        navigate('/home');
       }, 1500);
     }
   }, [progress, navigate]);
