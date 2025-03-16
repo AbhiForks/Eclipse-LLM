@@ -7,13 +7,14 @@ import ChatHeader from "@/components/ChatHeader";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
 import GlowEffect from "@/components/GlowEffect";
-import { CornerDownLeft, Search, Zap, Clock, Share2, Trash2 } from "lucide-react";
+import { ArrowRightIcon, CornerDownLeftIcon, SearchIcon, ZapIcon, ClockIcon, ShareIcon, Trash2Icon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 // Main chat UI component
 const ChatUI = () => {
-  const { currentConversation, renameConversation, deleteConversation, shareConversation } = useChat();
+  const { currentConversation, renameConversation, deleteConversation } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -52,34 +53,21 @@ const ChatUI = () => {
     }
   };
 
-  const handleShare = () => {
-    if (currentConversation) {
-      // In a real app, this would generate a shareable link
-      toast({
-        title: "Share link created",
-        description: "Link copied to clipboard. Your conversation can now be shared.",
-      });
-    }
-  };
-
   if (!currentConversation) {
     return <div className="flex items-center justify-center h-full">Loading...</div>;
   }
 
   return (
-    <div className="relative flex flex-col h-screen overflow-hidden">
-      {/* Glow and particle effects */}
-      <GlowEffect colorScheme="purple-orange" intensity="medium" />
-      
+    <div className="relative flex flex-col h-screen bg-black overflow-hidden">
       {/* Chat header with conversation options */}
       <div className="relative z-10">
         {isRenaming ? (
-          <div className="p-4 flex items-center border-b border-[#d946ef]/20 bg-black/40 backdrop-blur-md">
+          <div className="p-4 flex items-center border-b border-gray-800 bg-[#121212]">
             <input
               type="text"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="flex-1 bg-[#2a1b2d]/20 border border-[#d946ef]/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#d946ef]/50"
+              className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleRename();
@@ -88,7 +76,7 @@ const ChatUI = () => {
             />
             <button 
               onClick={handleRename} 
-              className="ml-2 px-4 py-2 bg-[#d946ef] text-white rounded-lg hover:bg-[#c026d3] transition-colors"
+              className="ml-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               Save
             </button>
@@ -106,24 +94,29 @@ const ChatUI = () => {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={handleRename}
-                  className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+                  className="p-2 rounded-full hover:bg-gray-800 transition-colors text-gray-400"
                   title="Rename conversation"
                 >
-                  <Clock className="h-5 w-5" />
+                  <ClockIcon className="h-5 w-5" />
                 </button>
                 <button 
-                  onClick={handleShare}
-                  className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+                  onClick={() => {
+                    toast({
+                      title: "Share link created",
+                      description: "Link copied to clipboard.",
+                    });
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-800 transition-colors text-gray-400"
                   title="Share conversation"
                 >
-                  <Share2 className="h-5 w-5" />
+                  <ShareIcon className="h-5 w-5" />
                 </button>
                 <button 
                   onClick={handleDelete}
                   className="p-2 rounded-full hover:bg-red-900/30 transition-colors text-red-400"
                   title="Delete conversation"
                 >
-                  <Trash2 className="h-5 w-5" />
+                  <Trash2Icon className="h-5 w-5" />
                 </button>
               </div>
             }
@@ -131,8 +124,8 @@ const ChatUI = () => {
         )}
       </div>
       
-      {/* Messages area - Fixed scrolling by adding proper overflow handling */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none">
+      {/* Messages area with fixed scrolling */}
+      <div className="flex-1 overflow-y-auto scrollbar-none bg-black">
         {currentConversation.messages.length <= 1 ? (
           <WelcomeScreen />
         ) : (
@@ -153,12 +146,10 @@ const ChatUI = () => {
 
 // Welcome screen shown for new conversations
 const WelcomeScreen = () => {
-  const isMobile = useIsMobile();
-  
   return (
-    <div className="h-full flex flex-col items-center justify-center p-6 gap-8">
+    <div className="flex flex-col items-center justify-center py-16 px-4 h-full">
       <motion.h1 
-        className="text-3xl md:text-4xl font-bold text-white"
+        className="text-4xl md:text-5xl font-bold text-white mb-8 text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
@@ -166,28 +157,18 @@ const WelcomeScreen = () => {
         What do you want to know?
       </motion.h1>
       
-      <motion.div
-        className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'} gap-4 mt-6 w-full max-w-3xl`}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-      >
+      <div className="w-full max-w-xl space-y-4">
         <SuggestionCard 
-          icon={<CornerDownLeft className="h-5 w-5" />}
+          icon={<CornerDownLeftIcon className="h-5 w-5" />}
           title="Ask anything"
           description="Get detailed explanations for complex topics"
         />
         <SuggestionCard 
-          icon={<Search className="h-5 w-5" />}
+          icon={<SearchIcon className="h-5 w-5" />}
           title="Find information"
           description="Search for facts, data, and resources"
         />
-        <SuggestionCard 
-          icon={<Zap className="h-5 w-5" />}
-          title="Enhance creativity"
-          description="Generate ideas, content, and more"
-        />
-      </motion.div>
+      </div>
     </div>
   );
 };
@@ -200,15 +181,17 @@ const SuggestionCard = ({ icon, title, description }: {
 }) => {
   return (
     <motion.div 
-      className="bg-gradient-to-br from-[#2a1b2d]/30 to-black backdrop-blur-md border border-[#d946ef]/20 p-4 rounded-xl flex flex-col gap-2"
-      whileHover={{ scale: 1.02, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)" }}
+      className="bg-[#121212]/70 border border-gray-800 p-4 rounded-xl flex items-center gap-4"
+      whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="rounded-full bg-[#d946ef]/20 p-2 w-fit">
+      <div className="rounded-full bg-purple-600/20 p-3">
         {icon}
       </div>
-      <h3 className="font-medium text-white">{title}</h3>
-      <p className="text-sm text-purple-300">{description}</p>
+      <div>
+        <h3 className="font-medium text-white text-lg">{title}</h3>
+        <p className="text-sm text-gray-400">{description}</p>
+      </div>
     </motion.div>
   );
 };
@@ -220,7 +203,7 @@ const Index = () => {
   return (
     <div className="flex min-h-screen w-full bg-black text-white">
       <Sidebar />
-      <main className={`flex-1 overflow-hidden ${isMobile ? 'ml-0' : 'ml-16'}`}>
+      <main className="flex-1 overflow-hidden">
         <ChatUI />
       </main>
     </div>

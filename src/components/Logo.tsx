@@ -19,23 +19,8 @@ const Logo: FC<LogoProps> = ({ size = 40, className = "", variant = "default" })
           transition={{ duration: 0.5 }}
         >
           <svg width={size} height={size} viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M25 5L5 25L25 45L45 25L25 5Z" 
-              stroke="url(#paint0_linear)" 
-              strokeWidth="2" 
-              fill="#121212"
-            />
-            <circle cx="25" cy="25" r="10" fill="url(#paint1_linear)" />
-            <defs>
-              <linearGradient id="paint0_linear" x1="5" y1="25" x2="45" y2="25" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#d946ef" />
-                <stop offset="1" stopColor="#d946ef" />
-              </linearGradient>
-              <linearGradient id="paint1_linear" x1="15" y1="25" x2="35" y2="25" gradientUnits="userSpaceOnUse">
-                <stop stopColor="#d946ef" />
-                <stop offset="1" stopColor="#d946ef" />
-              </linearGradient>
-            </defs>
+            <rect x="10" y="10" width="30" height="30" rx="5" transform="rotate(45 25 25)" fill="#121212" stroke="#a855f7" strokeWidth="2" />
+            <circle cx="25" cy="25" r="8" fill="#a855f7" />
           </svg>
         </motion.div>
       </div>
@@ -45,27 +30,12 @@ const Logo: FC<LogoProps> = ({ size = 40, className = "", variant = "default" })
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
       <div 
-        className="relative rounded-full overflow-hidden flex items-center justify-center bg-black"
+        className="relative rounded-full overflow-hidden flex items-center justify-center"
         style={{ width: size, height: size }}
       >
         <svg width={size} height={size} viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path 
-            d="M25 5L5 25L25 45L45 25L25 5Z" 
-            stroke="url(#paint0_linear)" 
-            strokeWidth="2" 
-            fill="#121212"
-          />
-          <circle cx="25" cy="25" r="10" fill="url(#paint1_linear)" />
-          <defs>
-            <linearGradient id="paint0_linear" x1="5" y1="25" x2="45" y2="25" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#d946ef" />
-              <stop offset="1" stopColor="#d946ef" />
-            </linearGradient>
-            <linearGradient id="paint1_linear" x1="15" y1="25" x2="35" y2="25" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#d946ef" />
-              <stop offset="1" stopColor="#d946ef" />
-            </linearGradient>
-          </defs>
+          <rect x="10" y="10" width="30" height="30" rx="5" transform="rotate(45 25 25)" fill="#121212" stroke="#a855f7" strokeWidth="2" />
+          <circle cx="25" cy="25" r="8" fill="#a855f7" />
         </svg>
       </div>
       <span className="font-semibold text-xl tracking-tight text-white">Eclipse</span>

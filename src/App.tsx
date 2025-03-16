@@ -23,15 +23,19 @@ const App = () => (
       <BrowserRouter>
         <AnimatePresence mode="wait">
           <Routes>
-            <Route path="/" element={<Loading />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/chat" element={
+            <Route path="/" element={
               <ChatProvider>
                 <Index />
               </ChatProvider>
             } />
+            <Route path="/home" element={<Home />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/discover" element={<Discover />} />
+            <Route path="/spaces" element={
+              <ChatProvider>
+                <Index />
+              </ChatProvider>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
