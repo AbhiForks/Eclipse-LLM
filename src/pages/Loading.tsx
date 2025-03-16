@@ -27,6 +27,8 @@ const LoadingScreen = () => {
       }, 500);
       
       setTimeout(() => {
+        // Store that we've seen the loading screen
+        localStorage.setItem('hasSeenLoading', 'true');
         navigate('/home');
       }, 1500);
     }

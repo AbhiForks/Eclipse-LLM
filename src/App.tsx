@@ -23,7 +23,8 @@ const App = () => (
       <BrowserRouter>
         <AnimatePresence mode="wait">
           <Routes>
-            <Route path="/" element={<Loading />} />
+            <Route path="/" element={<Navigate to="/loading" />} />
+            <Route path="/loading" element={<Loading />} />
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/chat" element={

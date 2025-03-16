@@ -10,6 +10,7 @@ import GlowEffect from "@/components/GlowEffect";
 import { CornerDownLeft, Search, Zap, Clock, Share2, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 // Main chat UI component
 const ChatUI = () => {
@@ -131,7 +132,7 @@ const ChatUI = () => {
         )}
       </div>
       
-      {/* Messages area - Fixed scrolling by adding proper overflow handling */}
+      {/* Messages area with fixed scrolling and proper overflow handling */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none">
         {currentConversation.messages.length <= 1 ? (
           <WelcomeScreen />
@@ -158,7 +159,7 @@ const WelcomeScreen = () => {
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 gap-8">
       <motion.h1 
-        className="text-3xl md:text-4xl font-bold text-white"
+        className="text-3xl md:text-4xl font-bold text-white text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
@@ -167,7 +168,7 @@ const WelcomeScreen = () => {
       </motion.h1>
       
       <motion.div
-        className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-3'} gap-4 mt-6 w-full max-w-3xl`}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 w-full max-w-3xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
@@ -216,6 +217,15 @@ const SuggestionCard = ({ icon, title, description }: {
 // Main layout component that wraps everything
 const Index = () => {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  // Check if user has seen loading screen, if not redirect to it
+  useEffect(() => {
+    const hasSeenLoading = localStorage.getItem('hasSeenLoading');
+    if (!hasSeenLoading) {
+      navigate('/loading');
+    }
+  }, [navigate]);
   
   return (
     <div className="flex min-h-screen w-full bg-black text-white">

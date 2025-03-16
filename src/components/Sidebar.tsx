@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Home, Globe, Library, Settings, User, Plus } from "lucide-react";
+import { Home, Globe, Library, Settings, User, Plus, Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
