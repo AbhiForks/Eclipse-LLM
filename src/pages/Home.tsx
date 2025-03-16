@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -10,7 +9,6 @@ import { ArrowRight, MessageSquare, Sparkles, Brain, Layers, Globe, Menu, X, Che
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Sample news data
 const newsItems = [
   {
     id: 1,
@@ -35,7 +33,6 @@ const newsItems = [
   }
 ];
 
-// Component for animated blobs
 const AnimatedBlob = ({ className = "", delay = 0 }) => {
   return (
     <motion.div 
@@ -62,13 +59,11 @@ const Home = () => {
   const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll();
   
-  // Parallax effects based on scroll
   const bgPositionY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacityHero = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const scaleBlob1 = useTransform(scrollYProgress, [0, 1], [1, 1.5]);
   const rotateBlob2 = useTransform(scrollYProgress, [0, 1], [0, 120]);
   
-  // Mouse parallax effect for background objects
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   useEffect(() => {
@@ -87,7 +82,6 @@ const Home = () => {
   
   return (
     <div className="min-h-screen w-full bg-black text-white overflow-x-hidden">
-      {/* Background effects */}
       <div className="fixed inset-0 z-0 overflow-hidden">
         <motion.div style={{ y: bgPositionY }} className="h-full w-full">
           <AnimatedBlob className="h-[800px] w-[800px] top-[-100px] left-[-100px]" />
@@ -100,7 +94,6 @@ const Home = () => {
         </motion.div>
       </div>
       
-      {/* Fixed particles */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <FloatingParticle size={8} top="10%" left="10%" duration={25} />
         <FloatingParticle size={10} top="20%" right="15%" duration={30} delay={2} />
@@ -109,7 +102,6 @@ const Home = () => {
         <FloatingParticle size={8} top="15%" right="40%" duration={22} delay={7} />
       </div>
       
-      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 backdrop-blur-md bg-black/20">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <Link to="/">
@@ -117,7 +109,6 @@ const Home = () => {
           </Link>
           
           {isMobile ? (
-            // Mobile menu
             <div>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -155,7 +146,6 @@ const Home = () => {
               )}
             </div>
           ) : (
-            // Desktop menu
             <div className="flex items-center gap-6">
               <nav className="flex gap-8 text-sm font-medium">
                 <a href="#features" className="text-purple-300 hover:text-white transition-colors">Features</a>
@@ -180,7 +170,6 @@ const Home = () => {
         </div>
       </header>
       
-      {/* Hero section */}
       <section className="relative min-h-screen pt-32 px-6 sm:px-12 md:px-24 flex flex-col items-center justify-center text-center z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -228,7 +217,6 @@ const Home = () => {
           </motion.div>
         </motion.div>
         
-        {/* Scroll indicator */}
         <motion.div 
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center"
           animate={{ y: [0, 10, 0] }}
@@ -239,7 +227,6 @@ const Home = () => {
         </motion.div>
       </section>
       
-      {/* Features section */}
       <section id="features" className="relative z-10 py-24 px-6 sm:px-12 md:px-24">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -292,7 +279,6 @@ const Home = () => {
         </div>
       </section>
       
-      {/* News Section */}
       <section id="news" className="relative z-10 py-24 px-6 sm:px-12 md:px-24 bg-gradient-to-b from-transparent to-purple-900/20">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -332,7 +318,6 @@ const Home = () => {
         </div>
       </section>
       
-      {/* CTA Section */}
       <section className="relative z-10 py-24 px-6 sm:px-12 md:px-24">
         <div className="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-black/60" />
         
@@ -359,7 +344,6 @@ const Home = () => {
         </motion.div>
       </section>
       
-      {/* Footer */}
       <footer className="relative z-10 border-t border-purple-500/20 py-12 px-6 sm:px-12 md:px-24">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
