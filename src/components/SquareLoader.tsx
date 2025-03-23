@@ -1,20 +1,20 @@
 
-import { motion } from "framer-motion";
+import React from "react";
 
 const SquareLoader = () => {
   return (
     <div className="loader-container">
       <div className="loader">
-        <div className="loader-square" />
-        <div className="loader-square" />
-        <div className="loader-square" />
-        <div className="loader-square" />
-        <div className="loader-square" />
-        <div className="loader-square" />
-        <div className="loader-square" />
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
+        <div className="loader-square"></div>
       </div>
-      
-      <style jsx>{`
+
+      <style>{`
         @keyframes square-animation {
           0% {
             left: 0;
@@ -138,6 +138,6 @@ const SquareLoader = () => {
       `}</style>
     </div>
   );
-}
+};
 
 export default SquareLoader;
