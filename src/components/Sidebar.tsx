@@ -6,20 +6,17 @@ import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const Sidebar = () => {
+const Sidebar = ({ onToggle }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  
-  // Check if we're on a route that uses ChatContext
-  const isChatRoute = location.pathname === '/chat' || location.pathname === '/library';
-  
-  // Create a safe context accessor
+
+  // Access chat context safely
   const chatContext = (() => {
     try {
       return useChat();
@@ -39,20 +36,12 @@ const Sidebar = () => {
       };
     }
   })();
-  
+
   const { createNewConversation } = chatContext;
-  
-  const handleSignOut = () => {
-    // In a real app, this would log the user out
-    toast({
-      title: "Signed out",
-      description: "You have been signed out successfully",
-    });
-  };
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
-    setShowMobileMenu(!showMobileMenu);
+    onToggle(!isCollapsed); // Notify parent component about the toggle state
   };
 
   const navItems = [
@@ -63,43 +52,55 @@ const Sidebar = () => {
 
   // Vertical sidebar for desktop
   const renderDesktopSidebar = () => (
-    <div className={`fixed left-0 top-0 bottom-0 bg-[#121212] flex flex-col items-center py-4 z-50 transition-all duration-300 ${isCollapsed ? 'w-0 opacity-0' : 'w-16'}`}>
-      <div className="mb-8 cursor-pointer" onClick={toggleSidebar}>
+    <motion.div
+      className={`fixed left-0 top-0 bottom-0 bg-[#121212] flex flex-col py-4 z-50 transition-all duration-300 ${
+        isCollapsed ? 'w-16' : 'w-64'
+      }`}
+      initial={false}
+      animate={{ width: isCollapsed ? 64 : 256 }}
+    >
+      <div className="px-4 mb-8 cursor-pointer flex items-center justify-center" onClick={toggleSidebar}>
         <Logo variant="minimal" size={32} />
+        {!isCollapsed && <span className="ml-2 text-white">Eclipse</span>}
       </div>
       
-      <Button 
-        onClick={createNewConversation}
-        className="w-10 h-10 bg-[#d946ef] rounded-full flex items-center justify-center mb-8"
-      >
-        <Plus size={20} />
-      </Button>
+      <div className="flex justify-center mb-8">
+        <Button 
+          onClick={createNewConversation}
+          className="w-10 h-10 bg-[#d946ef] hover:bg-[#c026d3] rounded-full flex items-center justify-center"
+        >
+          <Plus size={20} />
+        </Button>
+      </div>
       
-      <div className="flex-1 flex flex-col items-center gap-8">
+      <div className="flex-1 flex flex-col items-center gap-6">
         {navItems.map((item) => (
           <Link 
             key={item.label}
             to={item.path}
-            className={`p-2 rounded-lg ${
+            className={`flex items-center p-2 rounded-lg ${
               location.pathname === item.path 
                 ? "text-[#d946ef]" 
                 : "text-gray-400 hover:text-white"
             } transition-colors`}
           >
             <item.icon size={20} />
+            {!isCollapsed && <span className="ml-2">{item.label}</span>}
           </Link>
         ))}
       </div>
       
       <div className="mt-auto flex flex-col items-center gap-4 pb-4">
-        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-gray-400 hover:text-white">
+        <Link to="/profile" className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
           <User size={20} />
-        </Button>
-        <Button variant="ghost" size="icon" className="rounded-lg w-10 h-10 text-gray-400 hover:text-white">
+          {!isCollapsed && <span className="ml-2">Profile</span>}
+        </Link>
+        <Link to="/settings" className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
           <Settings size={20} />
-        </Button>
+          {!isCollapsed && <span className="ml-2">Settings</span>}
+        </Link>
       </div>
-    </div>
+    </motion.div>
   );
 
   // Mobile menu button and sheet
@@ -109,78 +110,60 @@ const Sidebar = () => {
         variant="ghost" 
         size="icon" 
         className="fixed top-4 left-4 z-50 md:hidden" 
-        onClick={toggleSidebar}
+        onClick={() => setShowMobileMenu(!showMobileMenu)}
       >
         <Menu size={24} />
       </Button>
       
-      {showMobileMenu && (
-        <motion.div 
-          className="fixed inset-0 bg-black/80 z-40 md:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={toggleSidebar}
-        >
+      <AnimatePresence>
+        {showMobileMenu && (
           <motion.div 
-            className="absolute left-0 top-0 bottom-0 w-64 bg-[#121212] p-4"
-            initial={{ x: -300 }}
-            animate={{ x: 0 }}
-            exit={{ x: -300 }}
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/80 z-40 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowMobileMenu(false)}
           >
-            <div className="flex items-center gap-4 mb-8">
-              <Logo size={32} onClick={toggleSidebar} />
-            </div>
-            
-            <Button 
-              onClick={() => {
-                createNewConversation();
-                setShowMobileMenu(false);
-              }}
-              className="w-full flex items-center gap-2 mb-6 bg-[#d946ef]"
+            <motion.div 
+              className="absolute left-0 top-0 bottom-0 w-64 bg-[#121212] p-4"
+              initial={{ x: -300 }}
+              animate={{ x: 0 }}
+              exit={{ x: -300 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <Plus size={18} />
-              <span>New Chat</span>
-            </Button>
-            
-            <div className="space-y-1">
-              {navItems.map((item) => (
-                <Link 
-                  key={item.label}
-                  to={item.path}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
-                    location.pathname === item.path 
-                      ? "text-[#d946ef]" 
-                      : "text-gray-400 hover:text-white"
-                  } transition-colors`}
-                  onClick={() => setShowMobileMenu(false)}
-                >
-                  <item.icon size={18} />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
-            </div>
-            
-            <div className="absolute bottom-4 left-4 right-4 space-y-1">
+              <div className="flex items-center mb-8">
+                <Logo variant="minimal" size={32} />
+                <span className="ml-2 text-white">Eclipse</span>
+              </div>
+              
               <Button 
-                variant="ghost" 
-                className="w-full flex items-center justify-start gap-3 text-gray-400 hover:text-white" 
+                onClick={createNewConversation}
+                className="w-10 h-10 bg-[#d946ef] hover:bg-[#c026d3] rounded-full flex items-center justify-center mb-8"
               >
-                <User size={18} />
-                <span>Account</span>
+                <Plus size={20} />
               </Button>
-              <Button 
-                variant="ghost" 
-                className="w-full flex items-center justify-start gap-3 text-gray-400 hover:text-white"
-              >
-                <Settings size={18} />
-                <span>Settings</span>
-              </Button>
-            </div>
+              
+              <div className="flex flex-col gap-6">
+                {navItems.map((item) => (
+                  <Link 
+                    key={item.label}
+                    to={item.path}
+                    className={`flex items-center p-2 rounded-lg ${
+                      location.pathname === item.path 
+                        ? "text-[#d946ef]" 
+                        : "text-gray-400 hover:text-white"
+                    } transition-colors`}
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <item.icon size={20} />
+                    <span className="ml-2">{item.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 

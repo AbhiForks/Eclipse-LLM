@@ -17,14 +17,17 @@ const ChatMessage: FC<ChatMessageProps> = ({ message }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`group flex gap-4 p-4 ${isUser ? "bg-primary/5" : ""}`}
+      className={`group flex gap-4 p-4 rounded-lg shadow-md mx-auto ${
+        isUser ? "bg-gray-800 text-white" : "bg-gray-900 text-gray-200"
+      }`}
+      style={{ maxWidth: isUser ? "60%" : "80%" }}
     >
       <div className={`flex-shrink-0 mt-1 rounded-full h-8 w-8 flex items-center justify-center
-        ${isUser ? "bg-primary/20" : "bg-secondary/20"}`}>
+        ${isUser ? "bg-gray-700" : "bg-blue-500"}`}>
         {isUser ? (
-          <User size={16} className="text-primary-light" />
+          <User size={16} className="text-white" />
         ) : (
-          <Bot size={16} className="text-secondary-light" />
+          <Bot size={16} className="text-blue-300" />
         )}
       </div>
       
@@ -32,7 +35,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ message }) => {
         {isLoading ? (
           <LoadingMessage />
         ) : (
-          <div className="prose prose-invert max-w-none">
+          <div className="prose max-w-none">
             {message.content.split("\n").map((paragraph, index) => (
               <p key={index} className={index === 0 ? "mt-0" : ""}>
                 {paragraph}
