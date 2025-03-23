@@ -2,17 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/15d47ca2-af6c-4d06-bd90-67ba8fe30bd3
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/15d47ca2-af6c-4d06-bd90-67ba8fe30bd3) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
+**URL**: https://cosmiceclipse.vercel.app/
 
 **Use your preferred IDE**
 
