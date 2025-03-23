@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/components/Logo";
+import SquareLoader from "@/components/SquareLoader";
 
 const LoadingScreen = () => {
   const navigate = useNavigate();
@@ -69,7 +70,8 @@ const LoadingScreen = () => {
           />
         </div>
         
-        <Logo variant="loading" size={70} />
+        {/* Replace Logo with SquareLoader */}
+        <SquareLoader />
         
         {/* Mystical particles */}
         <div className="absolute inset-0 opacity-30">
