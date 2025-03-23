@@ -46,7 +46,9 @@ const mockGenerateResponse = async (message: string): Promise<string> => {
   await new Promise(resolve => setTimeout(resolve, 2000));
   
   // Mock responses based on message content
-  if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
+  if (message.toLowerCase().includes("who are you")) {
+    return "I am Eclipse, an AI assistant trained by Abhilash.";
+  } else if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
     return "👋 Hello! I'm Eclipse, your AI assistant. How can I help you today?";
   } else if (message.toLowerCase().includes("help")) {
     return "I'd be happy to help! I can answer questions, provide information, assist with tasks, or just chat. What do you need assistance with?";
@@ -63,6 +65,57 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentConversation, setCurrentConversationState] = useState<Conversation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
+
+  // Generate a response for the assistant using Gemini API
+  const generateResponseWithGemini = async (message: string): Promise<string> => {
+    try {
+      // Use the provided API key
+      const apiKey = 'AIzaSyA232yj71eoN09bSzMe3qWHckX1Ltwz2pA';
+      
+      console.log("Calling Gemini API with message:", message);
+      
+      const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+      
+      const response = await fetch(`${endpoint}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: message }
+              ]
+            }
+          ]
+        })
+      });
+      
+      console.log("API response status:", response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Gemini API error response:", errorData);
+        return await mockGenerateResponse(message);
+      }
+      
+      const data = await response.json();
+      console.log("Gemini API response data:", data);
+      
+      if (data.candidates && data.candidates.length > 0 && 
+          data.candidates[0].content && data.candidates[0].content.parts && 
+          data.candidates[0].content.parts.length > 0) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        console.error("Unexpected API response structure:", data);
+        return await mockGenerateResponse(message);
+      }
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      return await mockGenerateResponse(message);
+    }
+  };
 
   // Initialize with a default conversation
   useEffect(() => {
@@ -179,7 +232,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Send a new message
   const sendMessage = useCallback(async (content: string) => {
     if (!currentConversation) return;
-
+    
+    console.log("Sending message:", content);
+  
     // Create new user message
     const userMessage: Message = {
       id: generateId(),
@@ -187,7 +242,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       content,
       timestamp: new Date(),
     };
-
+  
     // Create placeholder for assistant response
     const assistantMessage: Message = {
       id: generateId(),
@@ -196,27 +251,72 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       timestamp: new Date(),
       isLoading: true,
     };
-
+  
     // Update conversation with both messages
     const updatedConversation = {
       ...currentConversation,
       messages: [...currentConversation.messages, userMessage, assistantMessage],
       updatedAt: new Date(),
     };
-
-    // Update state
+  
+    // Update state immediately
     setConversations(prevConversations => 
       prevConversations.map(conv => 
         conv.id === currentConversation.id ? updatedConversation : conv
       )
     );
     setCurrentConversationState(updatedConversation);
+    setIsGenerating(true);
+  
+    try {
+      // Get response (will use mock if API fails)
+      const response = await generateResponseWithGemini(content);
+      
+      // Update the assistant message with the response
+      const finalMessages = updatedConversation.messages.map(msg => 
+        msg.id === assistantMessage.id 
+          ? { ...msg, content: response, isLoading: false } 
+          : msg
+      );
+      
+      const finalConversation = {
+        ...updatedConversation,
+        messages: finalMessages,
+      };
+      
+      // Update state with response
+      setConversations(prevConversations => 
+        prevConversations.map(conv => 
+          conv.id === currentConversation.id ? finalConversation : conv
+        )
+      );
+      setCurrentConversationState(finalConversation);
+    } catch (error) {
+      console.error("Error generating response:", error);
+      
+      // This should never happen now, but just in case
+      const errorMessages = updatedConversation.messages.map(msg => 
+        msg.id === assistantMessage.id 
+          ? { ...msg, content: "Sorry, I couldn't process your request. Please try again.", isLoading: false } 
+          : msg
+      );
+      
+      const errorConversation = {
+        ...updatedConversation,
+        messages: errorMessages,
+      };
+      
+      setConversations(prevConversations => 
+        prevConversations.map(conv => 
+          conv.id === currentConversation.id ? errorConversation : conv
+        )
+      );
+      setCurrentConversationState(errorConversation);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [currentConversation, generateResponseWithGemini]);
 
-    // Generate assistant response
-    await generateResponse(assistantMessage);
-  }, [currentConversation]);
-
-  // Generate a response for the assistant
   const generateResponse = useCallback(async (message: Message) => {
     if (!currentConversation) return;
     
@@ -227,8 +327,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userMessages = currentConversation.messages.filter(msg => msg.role === "user");
       const lastUserMessage = userMessages[userMessages.length - 1];
       
-      // Generate response
-      const responseContent = await mockGenerateResponse(lastUserMessage.content);
+      console.log("Generating response for message:", lastUserMessage.content);
+      
+      // Generate response using Gemini API
+      const responseContent = await generateResponseWithGemini(lastUserMessage.content);
+      
+      console.log("Generated response:", responseContent);
       
       // Update the assistant message with the response
       const updatedMessages = currentConversation.messages.map(msg => 
@@ -299,10 +403,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 // Hook to use the chat context
-export const useChat = () => {
+export function useChat() {
   const context = useContext(ChatContext);
   if (context === undefined) {
     throw new Error("useChat must be used within a ChatProvider");
   }
   return context;
-};
+}

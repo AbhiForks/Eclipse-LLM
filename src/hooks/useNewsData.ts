@@ -1,11 +1,32 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { NewsItem, getCategoryQuery, getBackupNewsData } from "@/components/discover/NewsUtils";
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { getCategoryQuery, getBackupNewsData } from '@/components/discover/NewsUtils';
+import type { NewsItem } from '@/components/discover/NewsUtils';
 
-// API endpoint and key
-const API_KEY = "d0ae4c2868c54f2c9591db2b704f178d";
-const BASE_URL = "https://newsapi.org/v2";
+// API configuration
+const API_KEY = 'T0AoAzxxjwdPXLeoYn-6RpKb60oT9XJPJFRMU8I-O2F98vrP';
+const BASE_URL = 'https://newsapi.org/v2';
+
+// Add relative time method to Date prototype if not exists
+if (!Date.prototype.toRelativeTime) {
+  Date.prototype.toRelativeTime = function() {
+    const now = new Date();
+    const diffMs = now.getTime() - this.getTime();
+    const diffSec = Math.round(diffMs / 1000);
+    const diffMin = Math.round(diffSec / 60);
+    const diffHour = Math.round(diffMin / 60);
+    const diffDay = Math.round(diffHour / 24);
+    
+    if (diffSec < 60) return `${diffSec} seconds ago`;
+    if (diffMin < 60) return `${diffMin} minutes ago`;
+    if (diffHour < 24) return `${diffHour} hours ago`;
+    if (diffDay === 1) return 'Yesterday';
+    if (diffDay < 30) return `${diffDay} days ago`;
+    
+    return this.toLocaleDateString();
+  };
+}
 
 export const useNewsData = (initialCategory: string = "for-you") => {
   const { toast } = useToast();
@@ -38,6 +59,8 @@ export const useNewsData = (initialCategory: string = "for-you") => {
         endpoint += `&category=${categoryQuery}`;
       }
 
+      console.log('Fetching news from:', endpoint);
+      
       const response = await fetch(endpoint);
       const data = await response.json();
       

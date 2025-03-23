@@ -22,12 +22,12 @@ const ChatUI = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  
-  // Auto-scroll to bottom of messages when messages change
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentConversation?.messages]);
 
+  // Define handleRename function
   const handleRename = () => {
     if (isRenaming && newTitle.trim() && currentConversation) {
       renameConversation(currentConversation.id, newTitle);
@@ -44,6 +44,17 @@ const ChatUI = () => {
     }
   };
 
+  // Define handleShare function
+  const handleShare = () => {
+    if (currentConversation) {
+      toast({
+        title: "Share link created",
+        description: "Link copied to clipboard. Your conversation can now be shared.",
+      });
+    }
+  };
+
+  // Define handleDelete function
   const handleDelete = () => {
     if (currentConversation) {
       deleteConversation(currentConversation.id);
@@ -56,97 +67,52 @@ const ChatUI = () => {
     }
   };
 
-  const handleShare = () => {
-    if (currentConversation) {
-      // In a real app, this would generate a shareable link
-      toast({
-        title: "Share link created",
-        description: "Link copied to clipboard. Your conversation can now be shared.",
-      });
-    }
-  };
-
   if (!currentConversation) {
     return <div className="flex items-center justify-center h-full">Loading...</div>;
   }
 
   return (
-    <div className="relative flex flex-col h-screen overflow-hidden">
-      {/* Glow and particle effects */}
-      <GlowEffect colorScheme="purple-orange" intensity="medium" />
-      
-      {/* Chat header with conversation options */}
-      <div className="relative z-10">
-        {isRenaming ? (
-          <div className="p-4 flex items-center border-b border-[#d946ef]/20 bg-black/40 backdrop-blur-md">
-            <input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              className="flex-1 bg-[#2a1b2d]/20 border border-[#d946ef]/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-[#d946ef]/50"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleRename();
-                if (e.key === 'Escape') setIsRenaming(false);
-              }}
-            />
-            <button 
-              onClick={handleRename} 
-              className="ml-2 px-4 py-2 bg-[#d946ef] text-white rounded-lg hover:bg-[#c026d3] transition-colors"
+    <div className="flex flex-col h-screen bg-gray-900 text-white">
+      <ChatHeader 
+        title={currentConversation.title}
+        actions={
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={handleRename}
+              variant="ghost"
+              size="icon"
+              className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+              title="Rename conversation"
             >
-              Save
-            </button>
-            <button 
-              onClick={() => setIsRenaming(false)} 
-              className="ml-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              <Edit className="h-5 w-5" />
+            </Button>
+            <Button 
+              onClick={handleShare}
+              variant="ghost"
+              size="icon"
+              className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+              title="Share conversation"
             >
-              Cancel
-            </button>
+              <Share2 className="h-5 w-5" />
+            </Button>
+            <Button 
+              onClick={handleDelete}
+              variant="ghost"
+              size="icon"
+              className="p-2 rounded-full hover:bg-red-900/30 transition-colors text-red-400"
+              title="Delete conversation"
+            >
+              <Trash2 className="h-5 w-5" />
+            </Button>
           </div>
-        ) : (
-          <ChatHeader 
-            title={currentConversation.title}
-            actions={
-              <div className="flex items-center gap-2">
-                <Button 
-                  onClick={handleRename}
-                  variant="ghost"
-                  size="icon"
-                  className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
-                  title="Rename conversation"
-                >
-                  <Edit className="h-5 w-5" />
-                </Button>
-                <Button 
-                  onClick={handleShare}
-                  variant="ghost"
-                  size="icon"
-                  className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
-                  title="Share conversation"
-                >
-                  <Share2 className="h-5 w-5" />
-                </Button>
-                <Button 
-                  onClick={handleDelete}
-                  variant="ghost"
-                  size="icon"
-                  className="p-2 rounded-full hover:bg-red-900/30 transition-colors text-red-400"
-                  title="Delete conversation"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </Button>
-              </div>
-            }
-          />
-        )}
-      </div>
-      
-      {/* Messages area with fixed scrolling and proper overflow handling */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none">
+        }
+      />
+
+      <div className="flex-1 overflow-y-auto p-4">
         {currentConversation.messages.length <= 1 ? (
           <WelcomeScreen />
         ) : (
-          <div className="pb-20">
+          <div className="space-y-4">
             {currentConversation.messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
@@ -154,9 +120,10 @@ const ChatUI = () => {
           </div>
         )}
       </div>
-      
-      {/* Chat input */}
-      <ChatInput className="absolute bottom-0 left-0 right-0" />
+
+      <div className="p-4">
+        <ChatInput />
+      </div>
     </div>
   );
 };
@@ -227,6 +194,7 @@ const SuggestionCard = ({ icon, title, description }: {
 const Index = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Check if user has seen loading screen, if not redirect to it
   useEffect(() => {
@@ -235,15 +203,21 @@ const Index = () => {
       navigate('/loading');
     }
   }, [navigate]);
-  
+
+  const handleSidebarToggle = (collapsed) => {
+    setIsSidebarCollapsed(collapsed);
+  };
+
   return (
-    <div className="flex min-h-screen w-full bg-black text-white">
-      <Sidebar />
-      <main className={`flex-1 overflow-hidden ${isMobile ? 'ml-0' : 'ml-16'}`}>
+    <div className="flex h-screen w-full bg-black text-white overflow-hidden">
+      <Sidebar onToggle={handleSidebarToggle} />
+      <main className={`flex-1 transition-all duration-300 ${isMobile ? 'w-full' : (isSidebarCollapsed ? 'ml-16' : 'ml-64')}`}>
         <ChatUI />
       </main>
     </div>
   );
 };
 
+// Change one of the default exports to a named export
+export { ChatUI, WelcomeScreen, SuggestionCard };
 export default Index;
