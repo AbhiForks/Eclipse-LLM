@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { NewsItem, getCategoryQuery, getBackupNewsData } from "@/components/discover/NewsUtils";
 
 // API endpoint and key
-const API_KEY = "c5ac9c9e7fd845a8846d895a573591ea";
+const API_KEY = "d0ae4c2868c54f2c9591db2b704f178d";
 const BASE_URL = "https://newsapi.org/v2";
 
 export const useNewsData = (initialCategory: string = "for-you") => {
