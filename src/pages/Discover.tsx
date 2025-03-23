@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "@/components/Sidebar";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Globe, Zap, DollarSign, Newspaper, Music, Trophy, 
-  ChevronRight, BookOpen, Bookmark, ThumbsUp, Loader2
+  ChevronRight, BookOpen, Bookmark, ThumbsUp, Loader2,
+  Filter, Search
 } from "lucide-react";
 import NewsCard from "@/components/NewsCard";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -38,72 +40,136 @@ const Discover = () => {
   const { toast } = useToast();
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchNews = async () => {
+  // API endpoint and key
+  const API_KEY = "c5ac9c9e7fd845a8846d895a573591ea";
+  const BASE_URL = "https://newsapi.org/v2";
+
+  const getCategoryQuery = (category: string) => {
+    switch(category) {
+      case "tech": return "technology";
+      case "finance": return "business";
+      case "arts": return "entertainment";
+      case "sports": return "sports";
+      case "top": return "";
+      default: return "general";
+    }
+  };
+
+  const fetchNews = useCallback(async (reset = false) => {
+    const currentPage = reset ? 1 : page;
+    
+    if (reset) {
       setIsLoading(true);
-      try {
-        // Using Gnews API free tier - limited to 100 calls per day 
-        // Another free alternative is NewsAPI.org
-        let apiUrl = 'https://gnews.io/api/v4/top-headlines?token=fe02a2f7ceeca09cf64634afff28ef4a&lang=en';
+      setNewsItems([]);
+      setPage(1);
+      setHasMore(true);
+    } else {
+      setIsFetchingMore(true);
+    }
+
+    try {
+      const categoryQuery = getCategoryQuery(activeCategory);
+      let endpoint = `${BASE_URL}/top-headlines?apiKey=${API_KEY}&language=en&page=${currentPage}&pageSize=10`;
+      
+      if (categoryQuery) {
+        endpoint += `&category=${categoryQuery}`;
+      }
+
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      
+      if (data.status === 'ok' && data.articles) {
+        const newArticles = data.articles.map((article: any, index: number) => ({
+          id: `${currentPage}-${index}-${Date.now()}`,
+          title: article.title || "No title available",
+          description: article.description || "No description available",
+          source: article.source?.name || "Unknown Source",
+          imageUrl: article.urlToImage || `https://placehold.co/600x400/272727/ffffff?text=News`,
+          date: article.publishedAt ? new Date(article.publishedAt).toRelativeTime() : "Recently",
+          category: categoryQuery || "general",
+          url: article.url
+        }));
         
-        if (activeCategory === "tech") {
-          apiUrl = 'https://gnews.io/api/v4/search?q=technology&token=fe02a2f7ceeca09cf64634afff28ef4a&lang=en';
-        } else if (activeCategory === "finance") {
-          apiUrl = 'https://gnews.io/api/v4/search?q=finance&token=fe02a2f7ceeca09cf64634afff28ef4a&lang=en';
-        } else if (activeCategory === "sports") {
-          apiUrl = 'https://gnews.io/api/v4/search?q=sports&token=fe02a2f7ceeca09cf64634afff28ef4a&lang=en';
-        } else if (activeCategory === "arts") {
-          apiUrl = 'https://gnews.io/api/v4/search?q=arts+culture&token=fe02a2f7ceeca09cf64634afff28ef4a&lang=en';
+        setNewsItems(prevItems => reset ? newArticles : [...prevItems, ...newArticles]);
+        setHasMore(currentPage * 10 < data.totalResults);
+        
+        if (!reset) {
+          setPage(prev => prev + 1);
         }
+      } else {
+        console.error('Failed to fetch news:', data);
+        toast({
+          title: "Unable to fetch latest news",
+          description: data.message || "Please try again later.",
+          variant: "destructive",
+        });
         
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        
-        if (data.articles) {
-          // Format the news items to match our interface
-          const formattedNews = data.articles.map((article: any, index: number) => ({
-            id: `${index}-${Date.now()}`,
-            title: article.title,
-            description: article.description || "No description available",
-            source: article.source?.name || "Unknown Source",
-            imageUrl: article.image || `https://placehold.co/400x200/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=News`,
-            date: new Date(article.publishedAt).toRelativeTime() || "Recently",
-            category: activeCategory === "for-you" || activeCategory === "top" ? (index % 2 === 0 ? "tech" : "finance") : activeCategory,
-            url: article.url
-          }));
-          
-          setNewsItems(formattedNews);
-        } else {
-          // If API call fails, use backup data
+        // If the API fails, use backup data
+        if (reset) {
           setNewsItems(getBackupNewsData(activeCategory));
-          console.error('Failed to fetch articles', data);
-          toast({
-            title: "Unable to fetch latest news",
-            description: "Using cached news instead. Please try again later.",
-            variant: "destructive",
-          });
         }
-      } catch (error) {
-        console.error('Error fetching news:', error);
+        
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      
+      if (reset) {
         setNewsItems(getBackupNewsData(activeCategory));
         toast({
           title: "Connection error",
           description: "Using cached news instead. Please check your internet connection.",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
+      }
+      
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    }
+  }, [activeCategory, page, toast]);
+
+  // Initial fetch when category changes
+  useEffect(() => {
+    fetchNews(true);
+  }, [activeCategory]);
+
+  // Setup intersection observer for infinite scrolling
+  useEffect(() => {
+    if (isLoading || isFetchingMore) return;
+    
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+    
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasMore) {
+        fetchNews();
       }
     };
     
-    fetchNews();
-  }, [activeCategory, toast]);
-
-  // Filter news based on active category
-  const filteredNews = activeCategory === "for-you" || activeCategory === "top" 
-    ? newsItems 
-    : newsItems.filter(item => item.category === activeCategory);
+    observerRef.current = new IntersectionObserver(handleObserver, {
+      rootMargin: '100px'
+    });
+    
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+    
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [isLoading, isFetchingMore, hasMore, fetchNews]);
 
   return (
     <div className="flex min-h-screen w-full bg-black text-white">
@@ -139,7 +205,7 @@ const Discover = () => {
             ) : (
               <div className="space-y-6">
                 {/* Featured news (first item) */}
-                {filteredNews.length > 0 && (
+                {newsItems.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -148,21 +214,21 @@ const Discover = () => {
                   >
                     <div className="relative aspect-video w-full">
                       <img 
-                        src={filteredNews[0].imageUrl} 
-                        alt={filteredNews[0].title} 
+                        src={newsItems[0].imageUrl} 
+                        alt={newsItems[0].title} 
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                       <div className="absolute bottom-0 left-0 right-0 p-6">
-                        <h2 className="text-2xl font-bold text-white mb-2">{filteredNews[0].title}</h2>
-                        <p className="text-gray-300 mb-3 line-clamp-2">{filteredNews[0].description}</p>
+                        <h2 className="text-2xl font-bold text-white mb-2">{newsItems[0].title}</h2>
+                        <p className="text-gray-300 mb-3 line-clamp-2">{newsItems[0].description}</p>
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-400">{filteredNews[0].source} • {filteredNews[0].date}</span>
+                          <span className="text-sm text-gray-400">{newsItems[0].source} • {newsItems[0].date}</span>
                           <div className="flex items-center gap-3">
                             <button className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
                               <Bookmark size={16} className="text-white" />
                             </button>
-                            <a href={filteredNews[0].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#d946ef]/90 text-white text-sm hover:bg-[#d946ef] transition-colors">
+                            <a href={newsItems[0].url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#d946ef]/90 text-white text-sm hover:bg-[#d946ef] transition-colors">
                               <BookOpen size={14} />
                               <span>Read</span>
                             </a>
@@ -173,14 +239,14 @@ const Discover = () => {
                   </motion.div>
                 )}
                 
-                {/* Rest of the news grid */}
+                {/* News grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredNews.slice(1).map((news, index) => (
+                  {newsItems.slice(1).map((news, index) => (
                     <motion.div
                       key={news.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.1 + index * 0.05 }}
+                      transition={{ duration: 0.4, delay: 0.1 + (index % 10) * 0.05 }}
                     >
                       <NewsCard 
                         title={news.title}
@@ -195,11 +261,18 @@ const Discover = () => {
                   ))}
                 </div>
                 
-                <div className="flex justify-center mt-8">
-                  <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1e1e1e] hover:bg-[#2a1b2d] transition-colors text-sm">
-                    <span>View more stories</span>
-                    <ChevronRight size={16} />
-                  </button>
+                {/* Loader for infinite scrolling */}
+                <div ref={loadMoreRef} className="py-8 flex justify-center">
+                  {isFetchingMore && (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-5 w-5 text-[#d946ef] animate-spin" />
+                      <p className="text-sm text-gray-400">Loading more stories...</p>
+                    </div>
+                  )}
+                  
+                  {!hasMore && newsItems.length > 0 && (
+                    <p className="text-sm text-gray-500">No more stories to load</p>
+                  )}
                 </div>
               </div>
             )}

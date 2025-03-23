@@ -32,7 +32,7 @@ const Sidebar = () => {
 
   const navItems = [
     { icon: Home, label: "Home", path: "/home" },
-    { icon: Globe, label: "Discover", path: "https://www.theverge.com/", external: true },
+    { icon: Globe, label: "Discover", path: "/discover" },
     { icon: Library, label: "Library", path: "/library" },
   ];
 
@@ -52,33 +52,17 @@ const Sidebar = () => {
       
       <div className="flex-1 flex flex-col items-center gap-8">
         {navItems.map((item) => (
-          item.external ? (
-            <a 
-              key={item.label}
-              href={item.path}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`p-2 rounded-lg ${
-                location.pathname === item.path 
-                  ? "text-[#d946ef]" 
-                  : "text-gray-400 hover:text-white"
-              } transition-colors`}
-            >
-              <item.icon size={20} />
-            </a>
-          ) : (
-            <Link 
-              key={item.label}
-              to={item.path}
-              className={`p-2 rounded-lg ${
-                location.pathname === item.path 
-                  ? "text-[#d946ef]" 
-                  : "text-gray-400 hover:text-white"
-              } transition-colors`}
-            >
-              <item.icon size={20} />
-            </Link>
-          )
+          <Link 
+            key={item.label}
+            to={item.path}
+            className={`p-2 rounded-lg ${
+              location.pathname === item.path 
+                ? "text-[#d946ef]" 
+                : "text-gray-400 hover:text-white"
+            } transition-colors`}
+          >
+            <item.icon size={20} />
+          </Link>
         ))}
       </div>
       
@@ -137,33 +121,19 @@ const Sidebar = () => {
             
             <div className="space-y-1">
               {navItems.map((item) => (
-                item.external ? (
-                  <a 
-                    key={item.label}
-                    href={item.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white transition-colors"
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    <item.icon size={18} />
-                    <span>{item.label}</span>
-                  </a>
-                ) : (
-                  <Link 
-                    key={item.label}
-                    to={item.path}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
-                      location.pathname === item.path 
-                        ? "text-[#d946ef]" 
-                        : "text-gray-400 hover:text-white"
-                    } transition-colors`}
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    <item.icon size={18} />
-                    <span>{item.label}</span>
-                  </Link>
-                )
+                <Link 
+                  key={item.label}
+                  to={item.path}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
+                    location.pathname === item.path 
+                      ? "text-[#d946ef]" 
+                      : "text-gray-400 hover:text-white"
+                  } transition-colors`}
+                  onClick={() => setShowMobileMenu(false)}
+                >
+                  <item.icon size={18} />
+                  <span>{item.label}</span>
+                </Link>
               ))}
             </div>
             
