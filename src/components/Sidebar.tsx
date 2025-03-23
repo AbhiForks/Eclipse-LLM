@@ -11,11 +11,36 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { conversations, currentConversation, createNewConversation, setCurrentConversation, deleteConversation } = useChat();
   const { toast } = useToast();
   const location = useLocation();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  
+  // Check if we're on a route that uses ChatContext
+  const isChatRoute = location.pathname === '/chat' || location.pathname === '/library';
+  
+  // Create a safe context accessor
+  const chatContext = (() => {
+    try {
+      return useChat();
+    } catch (e) {
+      // Return default values for routes without ChatProvider
+      return {
+        conversations: [],
+        currentConversation: null,
+        createNewConversation: () => {
+          toast({
+            title: "Chat feature unavailable",
+            description: "Please go to the Chat section to start a conversation",
+          });
+        },
+        setCurrentConversation: () => {},
+        deleteConversation: () => {},
+      };
+    }
+  })();
+  
+  const { createNewConversation } = chatContext;
   
   const handleSignOut = () => {
     // In a real app, this would log the user out

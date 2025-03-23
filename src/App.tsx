@@ -21,29 +21,23 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <AnimatePresence mode="wait">
-          <Routes>
-            <Route path="/" element={<Navigate to="/loading" />} />
-            <Route path="/loading" element={<Loading />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/chat" element={
-              <ChatProvider>
-                <Index />
-              </ChatProvider>
-            } />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/library" element={
-              <ChatProvider>
-                <Library />
-              </ChatProvider>
-            } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AnimatePresence>
-      </BrowserRouter>
+      <ChatProvider>
+        <BrowserRouter>
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route path="/" element={<Navigate to="/loading" />} />
+              <Route path="/loading" element={<Loading />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/chat" element={<Index />} />
+              <Route path="/discover" element={<Discover />} />
+              <Route path="/library" element={<Library />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AnimatePresence>
+        </BrowserRouter>
+      </ChatProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
