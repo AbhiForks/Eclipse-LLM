@@ -1,17 +1,21 @@
 
 import { motion } from "framer-motion";
 import NewsCard from "@/components/NewsCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getGoogleNewsUrl } from "./NewsUtils";
 
 interface NewsItem {
   id: string;
   title: string;
   description: string;
   source: string;
+  author?: string;
   imageUrl: string;
   date: string;
   category: string;
   url: string;
+  commentCount?: number;
 }
 
 interface NewsGridProps {
@@ -19,12 +23,17 @@ interface NewsGridProps {
   isFetchingMore: boolean;
   hasMore: boolean;
   loadMoreRef: React.RefObject<HTMLDivElement>;
+  category: string;
 }
 
-const NewsGrid = ({ newsItems, isFetchingMore, hasMore, loadMoreRef }: NewsGridProps) => {
+const NewsGrid = ({ newsItems, isFetchingMore, hasMore, loadMoreRef, category }: NewsGridProps) => {
+  const openGoogleNews = () => {
+    window.open(getGoogleNewsUrl(category), '_blank');
+  };
+
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="flex flex-col gap-4">
         {newsItems.map((news, index) => (
           <motion.div
             key={news.id}
@@ -34,15 +43,28 @@ const NewsGrid = ({ newsItems, isFetchingMore, hasMore, loadMoreRef }: NewsGridP
           >
             <NewsCard 
               title={news.title}
-              description={news.description}
-              source={news.source}
+              author={news.author || news.source}
               imageUrl={news.imageUrl}
               date={news.date}
+              commentCount={news.commentCount || Math.floor(Math.random() * 100)}
+              index={index + 1}
               onClick={() => window.open(news.url, '_blank')}
               hasActions
             />
           </motion.div>
         ))}
+      </div>
+      
+      {/* Google News Link */}
+      <div className="flex justify-center my-4">
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2 border-[#d946ef] text-[#d946ef] hover:bg-[#d946ef]/10"
+          onClick={openGoogleNews}
+        >
+          <ExternalLink size={16} />
+          More from Google News
+        </Button>
       </div>
       
       {/* Loader for infinite scrolling */}

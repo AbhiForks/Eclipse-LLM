@@ -1,13 +1,16 @@
 
+// Update the NewsItem interface to include author and commentCount
 export interface NewsItem {
   id: string;
   title: string;
   description: string;
   source: string;
+  author?: string;
   imageUrl: string;
   date: string;
   category: string;
   url: string;
+  commentCount?: number;
 }
 
 // Get category query for API
@@ -22,7 +25,21 @@ export const getCategoryQuery = (category: string) => {
   }
 };
 
+// Get Google News URL based on category
+export const getGoogleNewsUrl = (category: string) => {
+  switch(category) {
+    case "tech": return "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB";
+    case "finance": return "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB";
+    case "arts": return "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtVnVHZ0pWVXlnQVAB";
+    case "sports": return "https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB";
+    case "for-you": return "https://news.google.com/foryou";
+    case "top": return "https://news.google.com/topstories";
+    default: return "https://news.google.com";
+  }
+};
+
 // Backup news data in case API fails
+// In the getBackupNewsData function, add author to each news item
 export const getBackupNewsData = (category: string): NewsItem[] => {
   const techNews = [
     {
@@ -30,10 +47,12 @@ export const getBackupNewsData = (category: string): NewsItem[] => {
       title: "Meta Maneuvers to Block Tell-All Document Release",
       description: "According to reports, Meta has launched aggressive legal measures to block former employee Sarah Wynn-Williams from promoting her memoir 'Careless People.'",
       source: "Tech News Daily",
+      author: "ASH PARRISH",
       imageUrl: "https://placehold.co/400x200/3a1c71/ffffff?text=Meta",
       date: "2 hours ago",
       category: "tech",
-      url: "https://example.com/article1"
+      url: "https://example.com/article1",
+      commentCount: 2
     },
     {
       id: '2',

@@ -3,6 +3,7 @@ import { Globe } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 // Import refactored components
 import NewsCategories from "@/components/discover/NewsCategories";
@@ -13,6 +14,7 @@ import { useNewsData } from "@/hooks/useNewsData";
 
 const Discover = () => {
   const isMobile = useIsMobile();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { 
     newsItems, 
     isLoading, 
@@ -25,8 +27,8 @@ const Discover = () => {
 
   return (
     <div className="flex min-h-screen w-full bg-black text-white">
-      <Sidebar />
-      <main className={`flex-1 ${isMobile ? 'pl-0' : 'pl-16'}`}>
+      <Sidebar onToggle={setSidebarCollapsed} />
+      <main className={`flex-1 ${isMobile ? 'pl-0' : (sidebarCollapsed ? 'pl-16' : 'pl-64')}`}>
         <ScrollArea className="h-screen">
           <div className="max-w-5xl mx-auto px-4 py-8">
             <div className="flex items-center mb-8">
@@ -54,6 +56,7 @@ const Discover = () => {
                   isFetchingMore={isFetchingMore}
                   hasMore={hasMore}
                   loadMoreRef={loadMoreRef}
+                  category={activeCategory}
                 />
               </div>
             )}

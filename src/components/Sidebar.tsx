@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Home, Globe, Library, Settings, User, Plus, Menu } from "lucide-react";
+import { Home, Globe, Library, Settings, User, Plus, Menu, Newspaper } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useChat } from "@/context/ChatContext";
 import Logo from "./Logo";
@@ -8,6 +8,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser, useClerk } from "@clerk/clerk-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Sidebar = ({ onToggle }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -15,6 +22,8 @@ const Sidebar = ({ onToggle }) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const { user } = useUser();
+  const { signOut } = useClerk();
 
   // Access chat context safely
   const chatContext = (() => {
@@ -39,6 +48,14 @@ const Sidebar = ({ onToggle }) => {
 
   const { createNewConversation } = chatContext;
 
+  const handleSignOut = () => {
+    signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully",
+    });
+  };
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
     onToggle(!isCollapsed); // Notify parent component about the toggle state
@@ -48,7 +65,23 @@ const Sidebar = ({ onToggle }) => {
     { icon: Home, label: "Home", path: "/home" },
     { icon: Globe, label: "Discover", path: "/discover" },
     { icon: Library, label: "Library", path: "/library" },
+    { 
+      icon: Newspaper, 
+      label: "AI Compass", 
+      path: "https://aicompass.beehiiv.com/",
+      isExternal: true,
+      description: "Subscribe to our daily AI news digest for the latest updates in artificial intelligence."
+    },
   ];
+
+  const handleExternalLink = (url: string, description: string) => {
+    toast({
+      title: "AI Compass Newsletter",
+      description: description,
+      duration: 3000,
+    });
+    window.open(url, '_blank');
+  };
 
   // Vertical sidebar for desktop
   const renderDesktopSidebar = () => (
@@ -75,30 +108,66 @@ const Sidebar = ({ onToggle }) => {
       
       <div className="flex-1 flex flex-col items-center gap-6">
         {navItems.map((item) => (
-          <Link 
-            key={item.label}
-            to={item.path}
-            className={`flex items-center p-2 rounded-lg ${
-              location.pathname === item.path 
-                ? "text-[#d946ef]" 
-                : "text-gray-400 hover:text-white"
-            } transition-colors`}
-          >
-            <item.icon size={20} />
-            {!isCollapsed && <span className="ml-2">{item.label}</span>}
-          </Link>
+          item.isExternal ? (
+            <TooltipProvider key={item.label}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => handleExternalLink(item.path, item.description)}
+                    className={`flex items-center p-2 rounded-lg ${
+                      location.pathname === item.path 
+                        ? "text-[#d946ef]" 
+                        : "text-gray-400 hover:text-white"
+                    } transition-colors`}
+                  >
+                    <item.icon size={20} />
+                    {!isCollapsed && <span className="ml-2">{item.label}</span>}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{item.description}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Link 
+              key={item.label}
+              to={item.path}
+              className={`flex items-center p-2 rounded-lg ${
+                location.pathname === item.path 
+                  ? "text-[#d946ef]" 
+                  : "text-gray-400 hover:text-white"
+              } transition-colors`}
+            >
+              <item.icon size={20} />
+              {!isCollapsed && <span className="ml-2">{item.label}</span>}
+            </Link>
+          )
         ))}
       </div>
       
       <div className="mt-auto flex flex-col items-center gap-4 pb-4">
+        {user && (
+          <div className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
+            <img 
+              src={user.imageUrl} 
+              alt={user.fullName || "User"} 
+              className="w-8 h-8 rounded-full mr-2"
+            />
+            {!isCollapsed && <span className="ml-2">{user.fullName || user.username}</span>}
+          </div>
+        )}
         <Link to="/profile" className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
           <User size={20} />
           {!isCollapsed && <span className="ml-2">Profile</span>}
         </Link>
-        <Link to="/settings" className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
+        <Button 
+          onClick={handleSignOut}
+          className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors"
+        >
           <Settings size={20} />
-          {!isCollapsed && <span className="ml-2">Settings</span>}
-        </Link>
+          {!isCollapsed && <span className="ml-2">Sign Out</span>}
+        </Button>
       </div>
     </motion.div>
   );
@@ -145,21 +214,55 @@ const Sidebar = ({ onToggle }) => {
               
               <div className="flex flex-col gap-6">
                 {navItems.map((item) => (
-                  <Link 
-                    key={item.label}
-                    to={item.path}
-                    className={`flex items-center p-2 rounded-lg ${
-                      location.pathname === item.path 
-                        ? "text-[#d946ef]" 
-                        : "text-gray-400 hover:text-white"
-                    } transition-colors`}
-                    onClick={() => setShowMobileMenu(false)}
-                  >
-                    <item.icon size={20} />
-                    <span className="ml-2">{item.label}</span>
-                  </Link>
+                  item.isExternal ? (
+                    <button
+                      key={item.label}
+                      onClick={() => {
+                        handleExternalLink(item.path, item.description);
+                        setShowMobileMenu(false);
+                      }}
+                      className={`flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors`}
+                    >
+                      <item.icon size={20} />
+                      <span className="ml-2">{item.label}</span>
+                    </button>
+                  ) : (
+                    <Link 
+                      key={item.label}
+                      to={item.path}
+                      className={`flex items-center p-2 rounded-lg ${
+                        location.pathname === item.path 
+                          ? "text-[#d946ef]" 
+                          : "text-gray-400 hover:text-white"
+                      } transition-colors`}
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <item.icon size={20} />
+                      <span className="ml-2">{item.label}</span>
+                    </Link>
+                  )
                 ))}
               </div>
+              
+              {user && (
+                <div className="mt-auto pt-6 border-t border-gray-800">
+                  <div className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
+                    <img 
+                      src={user.imageUrl} 
+                      alt={user.fullName || "User"} 
+                      className="w-8 h-8 rounded-full mr-2"
+                    />
+                    <span className="ml-2">{user.fullName || user.username}</span>
+                  </div>
+                  <Button 
+                    onClick={handleSignOut}
+                    className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors mt-4 w-full justify-start"
+                  >
+                    <Settings size={20} />
+                    <span className="ml-2">Sign Out</span>
+                  </Button>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}

@@ -2,80 +2,24 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft } from "lucide-react";
 import Logo from "@/components/Logo";
 import { useToast } from "@/hooks/use-toast";
 import GlowEffect from "@/components/GlowEffect";
 
-// Form schemas
-const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
-
-const signupSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-type SignupFormValues = z.infer<typeof signupSchema>;
-
 const Login = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Login form
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  
-  // Signup form
-  const signupForm = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  });
-  
-  const onLoginSubmit = (data: LoginFormValues) => {
-    // Simulating login - would connect to backend in real implementation
-    console.log("Login data:", data);
-    toast({
-      title: "Login successful",
-      description: "Welcome back to Eclipse!",
-    });
-    navigate("/chat");
+  const handleRedirectToClerkSignIn = () => {
+    navigate("/sign-in");
   };
   
-  const onSignupSubmit = (data: SignupFormValues) => {
-    // Simulating signup - would connect to backend in real implementation
-    console.log("Signup data:", data);
-    toast({
-      title: "Account created",
-      description: "Welcome to Eclipse! Your account has been created successfully.",
-    });
-    navigate("/chat");
+  const handleRedirectToClerkSignUp = () => {
+    navigate("/sign-up");
   };
   
   return (
@@ -114,119 +58,35 @@ const Login = () => {
             </TabsList>
             
             <TabsContent value="login">
-              <Form {...loginForm}>
-                <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                  <FormField
-                    control={loginForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="your.email@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={loginForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <div className="text-right text-sm">
-                    <a href="#" className="text-primary hover:underline">Forgot password?</a>
-                  </div>
-                  
-                  <Button type="submit" className="w-full cosmic-button">Login</Button>
-                </form>
-              </Form>
+              <div className="space-y-4">
+                <Button 
+                  className="w-full bg-[#d946ef] hover:bg-[#c026d3]" 
+                  onClick={handleRedirectToClerkSignIn}
+                >
+                  Continue to Sign In
+                </Button>
+                
+                <div className="text-center text-sm text-muted-foreground">
+                  <p>Secure authentication powered by Clerk</p>
+                </div>
+              </div>
             </TabsContent>
             
             <TabsContent value="signup">
-              <Form {...signupForm}>
-                <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
-                  <FormField
-                    control={signupForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={signupForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="your.email@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={signupForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={signupForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <Button type="submit" className="w-full cosmic-button">Sign Up</Button>
-                </form>
-              </Form>
+              <div className="space-y-4">
+                <Button 
+                  className="w-full bg-[#d946ef] hover:bg-[#c026d3]" 
+                  onClick={handleRedirectToClerkSignUp}
+                >
+                  Continue to Sign Up
+                </Button>
+                
+                <div className="text-center text-sm text-muted-foreground">
+                  <p>Create your account with Clerk's secure authentication</p>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
-          
-          <div className="mt-6 pt-6 border-t border-border/30 text-center text-sm text-muted-foreground">
-            <p>
-              {activeTab === "login" ? (
-                <>Don't have an account? <button onClick={() => setActiveTab("signup")} className="text-primary hover:underline">Sign Up</button></>
-              ) : (
-                <>Already have an account? <button onClick={() => setActiveTab("login")} className="text-primary hover:underline">Login</button></>
-              )}
-            </p>
-          </div>
         </div>
       </motion.div>
     </div>
