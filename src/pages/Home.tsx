@@ -9,6 +9,7 @@ import NewsCard from "@/components/NewsCard";
 import { ArrowRight, MessageSquare, Sparkles, Brain, Layers, Globe, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@clerk/clerk-react";
 
 // Sample news data
 const newsItems = [
@@ -84,6 +85,8 @@ const Home = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+  
+  const { isSignedIn, user } = useUser();
   
   return (
     <div className="min-h-screen w-full bg-black text-white overflow-x-hidden">
