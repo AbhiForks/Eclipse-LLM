@@ -58,7 +58,7 @@ const LoadingMessage = () => {
           transition={{
             repeat: Infinity,
             repeatType: "reverse",
-            duration: 0.6,
+            duration: 0.2, // Further reduced from 0.3
             delay: 0,
           }}
           className="h-2 w-2 rounded-full bg-primary"
@@ -69,8 +69,8 @@ const LoadingMessage = () => {
           transition={{
             repeat: Infinity,
             repeatType: "reverse",
-            duration: 0.6,
-            delay: 0.2,
+            duration: 0.2, // Reduced from 0.6
+            delay: 0.1, // Reduced from 0.2
           }}
           className="h-2 w-2 rounded-full bg-primary"
         />
@@ -80,8 +80,8 @@ const LoadingMessage = () => {
           transition={{
             repeat: Infinity,
             repeatType: "reverse",
-            duration: 0.6,
-            delay: 0.4,
+            duration: 0.2, // Reduced from 0.6
+            delay: 0.2, // Reduced from 0.4
           }}
           className="h-2 w-2 rounded-full bg-primary"
         />
