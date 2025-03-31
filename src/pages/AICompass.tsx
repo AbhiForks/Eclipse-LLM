@@ -1,10 +1,8 @@
-
-import { Globe } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 
-const Discover = () => {
+const AICompass = () => {
   const isMobile = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -15,7 +13,7 @@ const Discover = () => {
         className={`flex-1 ${isMobile ? '' : (sidebarCollapsed ? 'ml-16' : 'ml-64')} h-screen overflow-hidden bg-black`}
       >
         <iframe
-          src="https://singularityhub.com"
+          src="https://www.neatprompts.com"
           className="w-full"
           style={{
             border: "none",
@@ -31,4 +29,4 @@ const Discover = () => {
   );
 };
 
-export default Discover;
+export default AICompass;

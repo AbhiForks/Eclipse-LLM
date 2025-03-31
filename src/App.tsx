@@ -6,8 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
-import Home from "./pages/Home";
-import Loading from "./pages/Loading";
+import Home from "./pages/home"; // Changed from Home to home
+import Loading from "./pages/loading"; // Changed from Loading to loading
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import { ChatProvider } from "./context/ChatContext";
@@ -15,6 +15,7 @@ import Discover from "./pages/Discover";
 import Library from "./pages/Library";
 import { ClerkProvider, SignIn, SignUp } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AICompass from "@/pages/AICompass";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,12 @@ const App = () => (
                 <Route path="/library" element={
                   <ProtectedRoute>
                     <Library />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/ai-compass" element={
+                  <ProtectedRoute>
+                    <AICompass />
                   </ProtectedRoute>
                 } />
                 
