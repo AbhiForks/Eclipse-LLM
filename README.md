@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to your my project
 
 ## Project info
 
@@ -50,7 +50,7 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+
 
 Simply open [Lovable](https://lovable.dev/projects/15d47ca2-af6c-4d06-bd90-67ba8fe30bd3) and click on Share -> Publish.
 
