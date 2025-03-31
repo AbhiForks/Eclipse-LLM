@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    base: '/', // Add this to ensure proper path resolution
   },
   plugins: [
     react(),
@@ -19,4 +20,19 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: 'dist',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html')
+      },
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          vendor: ['@radix-ui/react-icons'] // Add other large deps
+        }
+      }
+    }
+  }
 }));
