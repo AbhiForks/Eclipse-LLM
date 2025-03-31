@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Index from "./pages/Index";
-import Home from "./pages/home"; // Changed from Home to home
+// Change this import
+import Home from "./pages/home"; // Use lowercase to match the actual filename
 import Loading from "./pages/loading"; // Changed from Loading to loading
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
