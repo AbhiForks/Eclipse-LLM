@@ -61,18 +61,21 @@ const Sidebar = ({ onToggle }) => {
     onToggle(!isCollapsed); // Notify parent component about the toggle state
   };
 
+  // Update the navItems array to include description for all items
   const navItems = [
-    { icon: Home, label: "Home", path: "/home" },
-    { icon: Globe, label: "Discover", path: "/discover" },
-    { icon: Library, label: "Library", path: "/library" },
+    { icon: Home, label: "Home", path: "/home", description: "Home page" },
+    { icon: Globe, label: "Discover", path: "/discover", description: "Discover new content" },
+    { icon: Library, label: "Library", path: "/library", description: "Your saved content" },
     { 
       icon: Newspaper, 
       label: "AI Compass", 
-      path: "https://aicompass.beehiiv.com/",
-      isExternal: true,
+      path: "/ai-compass",
+      isExternal: false,
       description: "Subscribe to our daily AI news digest for the latest updates in artificial intelligence."
     },
   ];
+  
+  // Remove the handleExternalLink function since we're not using it for AI Compass anymore
 
   const handleExternalLink = (url: string, description: string) => {
     toast({
