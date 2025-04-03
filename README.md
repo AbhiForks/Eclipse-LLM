@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: eclipse-llm.vercel.app
+**URL**: [eclipse-llm.vercel.app](https://eclipse-llm.vercel.app/)
 
 **Use your preferred IDE**
 
