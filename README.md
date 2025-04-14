@@ -1,8 +1,8 @@
-# Welcome to your my project
+
 
 ## Project info
 
-**URL**: https://cosmiceclipse.vercel.app/
+**URL**: [eclipse-llm.vercel.app](https://eclipse-llm.vercel.app/)
 
 **Use your preferred IDE**
 
