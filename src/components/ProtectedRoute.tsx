@@ -1,5 +1,6 @@
-import { useUser, RedirectToSignIn } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,8 +13,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
-  if (!isSignedIn) {
-    return <RedirectToSignIn />;
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
