@@ -1,3 +1,9 @@
+/**
+ * ChatMessage.tsx
+ *
+ * Component for displaying individual chat messages.
+ * Supports user and assistant messages with loading animations.
+ */
 
 import { FC } from "react";
 import { Message } from "@/context/ChatContext";
@@ -22,15 +28,17 @@ const ChatMessage: FC<ChatMessageProps> = ({ message }) => {
       }`}
       style={{ maxWidth: isUser ? "60%" : "80%" }}
     >
-      <div className={`flex-shrink-0 mt-1 rounded-full h-8 w-8 flex items-center justify-center
-        ${isUser ? "bg-gray-700" : "bg-blue-500"}`}>
+      <div
+        className={`flex-shrink-0 mt-1 rounded-full h-8 w-8 flex items-center justify-center
+        ${isUser ? "bg-gray-700" : "bg-blue-500"}`}
+      >
         {isUser ? (
           <User size={16} className="text-white" />
         ) : (
           <Bot size={16} className="text-blue-300" />
         )}
       </div>
-      
+
       <div className="flex-1">
         {isLoading ? (
           <LoadingMessage />
