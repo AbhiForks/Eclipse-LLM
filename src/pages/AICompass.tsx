@@ -4,13 +4,13 @@ import { useState } from "react";
 
 const AICompass = () => {
   const isMobile = useIsMobile();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
 
   return (
     <div className="flex h-screen w-full bg-black">
       <Sidebar onToggle={setSidebarCollapsed} />
-      <div 
-        className={`flex-1 ${isMobile ? '' : (sidebarCollapsed ? 'ml-16' : 'ml-64')} h-screen overflow-hidden bg-black`}
+      <div
+        className={`flex-1 ${isMobile ? "" : sidebarCollapsed ? "ml-16" : "ml-64"} h-screen overflow-hidden bg-black`}
       >
         <iframe
           src="https://www.neatprompts.com"
@@ -21,7 +21,7 @@ const AICompass = () => {
             marginBottom: "-100px",
             position: "relative",
             top: "-10px",
-            backgroundColor: "black"
+            backgroundColor: "black",
           }}
         />
       </div>
