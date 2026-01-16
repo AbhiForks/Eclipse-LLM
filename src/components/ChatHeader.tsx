@@ -6,7 +6,6 @@
  */
 
 import { FC, useState } from "react";
-import { Share2, Trash2, Pencil, Settings } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,12 +33,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Logo from "./Logo";
+import PixelLogo from "./PixelLogo";
 import { useChat } from "@/context/ChatContext";
 
 interface ChatHeaderProps {
   title?: string;
-  actions?: React.ReactNode; // Add the actions prop to the interface
+  actions?: React.ReactNode;
 }
 
 const ChatHeader: FC<ChatHeaderProps> = ({
@@ -77,10 +76,10 @@ const ChatHeader: FC<ChatHeaderProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b border-border/30">
+    <div className="flex items-center justify-between p-4 border-b border-[#B8B2B2]/10 bg-[#000000]">
       <div className="flex items-center gap-4">
-        <Logo size={32} />
-        <h1 className="text-lg font-medium">{title}</h1>
+        <PixelLogo size={32} animated={false} showText={false} />
+        <h1 className="text-lg font-medium text-[#F2EDED]">{title}</h1>
       </div>
       <div className="flex items-center gap-2">
         {actions ? (
@@ -92,9 +91,11 @@ const ChatHeader: FC<ChatHeaderProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                  className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
                 >
-                  <Pencil size={18} />
+                  <span className="material-icons" style={{ fontSize: "18px" }}>
+                    edit
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -112,10 +113,12 @@ const ChatHeader: FC<ChatHeaderProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
               onClick={handleShare}
             >
-              <Share2 size={18} />
+              <span className="material-icons" style={{ fontSize: "18px" }}>
+                share
+              </span>
             </Button>
 
             <DropdownMenu>
@@ -123,14 +126,16 @@ const ChatHeader: FC<ChatHeaderProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                  className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
                 >
-                  <Trash2 size={18} />
+                  <span className="material-icons" style={{ fontSize: "18px" }}>
+                    delete
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
+                  className="text-[#EF4444] focus:text-[#EF4444]"
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >
                   Delete conversation
@@ -141,15 +146,16 @@ const ChatHeader: FC<ChatHeaderProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+              className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
             >
-              <Settings size={18} />
+              <span className="material-icons" style={{ fontSize: "18px" }}>
+                settings
+              </span>
             </Button>
           </>
         )}
       </div>
 
-      {/* Rename Dialog */}
       <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -162,22 +168,27 @@ const ChatHeader: FC<ChatHeaderProps> = ({
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Conversation title"
-            className="mt-2"
+            className="mt-2 bg-[#0A0A0A] border-[#B8B2B2]/20 text-[#F2EDED]"
             autoFocus
           />
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setIsRenameDialogOpen(false)}
+              className="border-[#B8B2B2]/30 text-[#F2EDED] hover:bg-[#F2EDED]/10"
             >
               Cancel
             </Button>
-            <Button onClick={handleRename}>Save</Button>
+            <Button
+              onClick={handleRename}
+              className="bg-[#F2EDED] text-[#000000] hover:bg-[#F2EDED]/90"
+            >
+              Save
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -191,10 +202,12 @@ const ChatHeader: FC<ChatHeaderProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="border-[#B8B2B2]/30 text-[#F2EDED] hover:bg-[#F2EDED]/10">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-[#EF4444] text-white hover:bg-[#EF4444]/90"
             >
               Delete
             </AlertDialogAction>

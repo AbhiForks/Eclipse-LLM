@@ -12,29 +12,16 @@ import Sidebar from "@/components/Sidebar";
 import ChatHeader from "@/components/ChatHeader";
 import ChatMessage from "@/components/ChatMessage";
 import ChatInput from "@/components/ChatInput";
-import GlowEffect from "@/components/GlowEffect";
-import {
-  CornerDownLeft,
-  Search,
-  Zap,
-  Clock,
-  Share2,
-  Trash2,
-  Edit,
-} from "lucide-react";
+import GlowOrbs from "@/components/GlowOrbs";
+import NoiseOverlay from "@/components/NoiseOverlay";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
-// Main chat UI component
 const ChatUI = () => {
-  const {
-    currentConversation,
-    renameConversation,
-    deleteConversation,
-    shareConversation,
-  } = useChat();
+  const { currentConversation, renameConversation, deleteConversation } =
+    useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -46,7 +33,6 @@ const ChatUI = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentConversation?.messages]);
 
-  // Define handleRename function
   const handleRename = () => {
     if (isRenaming && newTitle.trim() && currentConversation) {
       renameConversation(currentConversation.id, newTitle);
@@ -63,7 +49,6 @@ const ChatUI = () => {
     }
   };
 
-  // Define handleShare function
   const handleShare = () => {
     if (currentConversation) {
       toast({
@@ -74,7 +59,6 @@ const ChatUI = () => {
     }
   };
 
-  // Define handleDelete function
   const handleDelete = () => {
     if (currentConversation) {
       deleteConversation(currentConversation.id);
@@ -89,12 +73,14 @@ const ChatUI = () => {
 
   if (!currentConversation) {
     return (
-      <div className="flex items-center justify-center h-full">Loading...</div>
+      <div className="flex items-center justify-center h-full text-[#F2EDED]">
+        Loading...
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 text-white">
+    <div className="flex flex-col h-screen bg-[#000000] text-[#F2EDED]">
       <ChatHeader
         title={currentConversation.title}
         actions={
@@ -103,43 +89,43 @@ const ChatUI = () => {
               onClick={handleRename}
               variant="ghost"
               size="icon"
-              className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+              className="p-2 rounded-full hover:bg-[#F2EDED]/10 transition-colors text-[#B8B2B2] hover:text-[#F2EDED]"
               title="Rename conversation"
             >
-              <Edit className="h-5 w-5" />
+              <span className="material-icons h-5 w-5">edit</span>
             </Button>
             <Button
               onClick={handleShare}
               variant="ghost"
               size="icon"
-              className="p-2 rounded-full hover:bg-[#2a1b2d] transition-colors text-purple-300"
+              className="p-2 rounded-full hover:bg-[#F2EDED]/10 transition-colors text-[#B8B2B2] hover:text-[#F2EDED]"
               title="Share conversation"
             >
-              <Share2 className="h-5 w-5" />
+              <span className="material-icons h-5 w-5">share</span>
             </Button>
             <Button
               onClick={handleDelete}
               variant="ghost"
               size="icon"
-              className="p-2 rounded-full hover:bg-red-900/30 transition-colors text-red-400"
+              className="p-2 rounded-full hover:bg-[#EF4444]/20 transition-colors text-[#EF4444]"
               title="Delete conversation"
             >
-              <Trash2 className="h-5 w-5" />
+              <span className="material-icons h-5 w-5">delete</span>
             </Button>
           </div>
         }
       />
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {currentConversation.messages.length <= 1 ? (
           <WelcomeScreen />
         ) : (
-          <div className="space-y-4">
+          <>
             {currentConversation.messages.map((message) => (
               <ChatMessage key={message.id} message={message} />
             ))}
             <div ref={messagesEndRef} />
-          </div>
+          </>
         )}
       </div>
 
@@ -150,14 +136,13 @@ const ChatUI = () => {
   );
 };
 
-// Welcome screen shown for new conversations
 const WelcomeScreen = () => {
   const isMobile = useIsMobile();
 
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 gap-8">
       <motion.h1
-        className="text-3xl md:text-4xl font-bold text-white text-center"
+        className="text-3xl md:text-4xl font-bold text-[#F2EDED] text-center"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.5 }}
@@ -172,17 +157,17 @@ const WelcomeScreen = () => {
         transition={{ delay: 0.6, duration: 0.5 }}
       >
         <SuggestionCard
-          icon={<CornerDownLeft className="h-5 w-5" />}
+          icon={<span className="material-icons">call_split</span>}
           title="Ask anything"
           description="Get detailed explanations for complex topics"
         />
         <SuggestionCard
-          icon={<Search className="h-5 w-5" />}
+          icon={<span className="material-icons">search</span>}
           title="Find information"
           description="Search for facts, data, and resources"
         />
         <SuggestionCard
-          icon={<Zap className="h-5 w-5" />}
+          icon={<span className="material-icons">auto_awesome</span>}
           title="Enhance creativity"
           description="Generate ideas, content, and more"
         />
@@ -191,7 +176,6 @@ const WelcomeScreen = () => {
   );
 };
 
-// Card component for welcome screen suggestions
 const SuggestionCard = ({
   icon,
   title,
@@ -203,28 +187,27 @@ const SuggestionCard = ({
 }) => {
   return (
     <motion.div
-      className="bg-gradient-to-br from-[#2a1b2d]/30 to-black backdrop-blur-md border border-[#d946ef]/20 p-4 rounded-xl flex flex-col gap-2"
+      className="bg-[#0A0A0A] backdrop-blur-md border border-[#B8B2B2]/10 p-4 rounded-xl flex flex-col gap-2 cursor-pointer"
       whileHover={{
         scale: 1.02,
-        boxShadow:
-          "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+        borderColor: "rgba(242, 237, 237, 0.2)",
       }}
       whileTap={{ scale: 0.98 }}
     >
-      <div className="rounded-full bg-[#d946ef]/20 p-2 w-fit">{icon}</div>
-      <h3 className="font-medium text-white">{title}</h3>
-      <p className="text-sm text-purple-300">{description}</p>
+      <div className="rounded-full bg-[#F2EDED]/10 p-2 w-fit text-[#F2EDED]">
+        {icon}
+      </div>
+      <h3 className="font-medium text-[#F2EDED]">{title}</h3>
+      <p className="text-sm text-[#B8B2B2]">{description}</p>
     </motion.div>
   );
 };
 
-// Main layout component that wraps everything
 const Index = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Check if user has seen loading screen, if not redirect to it
   useEffect(() => {
     const hasSeenLoading = localStorage.getItem("hasSeenLoading");
     if (!hasSeenLoading) {
@@ -237,10 +220,14 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-black text-white overflow-hidden">
+    <div className="flex h-screen w-full bg-[#000000] text-[#F2EDED] overflow-hidden">
+      <GlowOrbs />
+      <NoiseOverlay />
       <Sidebar onToggle={handleSidebarToggle} />
       <main
-        className={`flex-1 transition-all duration-300 ${isMobile ? "w-full" : isSidebarCollapsed ? "ml-16" : "ml-64"}`}
+        className={`flex-1 transition-all duration-300 relative z-10 ${
+          isMobile ? "w-full" : isSidebarCollapsed ? "ml-16" : "ml-64"
+        }`}
       >
         <ChatUI />
       </main>
@@ -248,6 +235,5 @@ const Index = () => {
   );
 };
 
-// Change one of the default exports to a named export
 export { ChatUI, WelcomeScreen, SuggestionCard };
 export default Index;
