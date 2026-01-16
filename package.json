@@ -1,8 +1,45 @@
 {
   "name": "eclipse-llm",
-  "private": true,
   "version": "1.0.0",
+  "description": "A modern, AI-powered chat application built by Abhilash V",
   "type": "module",
+  "author": "Abhilash V <abhilashvishwa12@gmail.com>",
+  "maintainers": [
+    {
+      "name": "Abhilash V",
+      "email": "abhilashvishwa12@gmail.com",
+      "url": "https://github.com/AbhiForks"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Abhilash V",
+      "email": "abhilashvishwa12@gmail.com",
+      "url": "https://github.com/AbhiForks"
+    }
+  ],
+  "homepage": "https://eclipse-llm.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AbhiForks/Eclipse-LLM",
+    "directory": "."
+  },
+  "bugs": {
+    "url": "https://github.com/AbhiForks/Eclipse-LLM/issues",
+    "email": "abhilashvishwa12@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "eclipse-llm",
+    "eclipse",
+    "llm",
+    "chat",
+    "ai",
+    "abhilash-v",
+    "gemini",
+    "react",
+    "typescript"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
