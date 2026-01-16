@@ -1,12 +1,18 @@
+/**
+ * ChatHeader.tsx
+ *
+ * Header component for the chat interface that displays the conversation title
+ * and provides actions for renaming, sharing, and deleting conversations.
+ */
 
 import { FC, useState } from "react";
 import { Share2, Trash2, Pencil, Settings } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
@@ -36,32 +42,40 @@ interface ChatHeaderProps {
   actions?: React.ReactNode; // Add the actions prop to the interface
 }
 
-const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }) => {
-  const { currentConversation, renameConversation, deleteConversation, shareConversation } = useChat();
+const ChatHeader: FC<ChatHeaderProps> = ({
+  title = "New Conversation",
+  actions,
+}) => {
+  const {
+    currentConversation,
+    renameConversation,
+    deleteConversation,
+    shareConversation,
+  } = useChat();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
-  
+
   const handleRename = () => {
     if (currentConversation) {
       renameConversation(currentConversation.id, newTitle);
       setIsRenameDialogOpen(false);
     }
   };
-  
+
   const handleDelete = () => {
     if (currentConversation) {
       deleteConversation(currentConversation.id);
       setIsDeleteDialogOpen(false);
     }
   };
-  
+
   const handleShare = () => {
     if (currentConversation) {
       shareConversation(currentConversation.id);
     }
   };
-  
+
   return (
     <div className="flex items-center justify-between p-4 border-b border-border/30">
       <div className="flex items-center gap-4">
@@ -75,37 +89,47 @@ const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }
           <>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                >
                   <Pencil size={18} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => {
-                  setNewTitle(title);
-                  setIsRenameDialogOpen(true);
-                }}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setNewTitle(title);
+                    setIsRenameDialogOpen(true);
+                  }}
+                >
                   Rename
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
+
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-9 w-9 text-muted-foreground hover:text-foreground"
               onClick={handleShare}
             >
               <Share2 size={18} />
             </Button>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                >
                   <Trash2 size={18} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >
@@ -113,14 +137,18 @@ const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground">
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 text-muted-foreground hover:text-foreground"
+            >
               <Settings size={18} />
             </Button>
           </>
         )}
       </div>
-      
+
       {/* Rename Dialog */}
       <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
         <DialogContent>
@@ -138,25 +166,33 @@ const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }
             autoFocus
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsRenameDialogOpen(false)}>Cancel</Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsRenameDialogOpen(false)}
+            >
+              Cancel
+            </Button>
             <Button onClick={handleRename}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Delete Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete conversation</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this conversation and all its messages.
-              This action cannot be undone.
+              This will permanently delete this conversation and all its
+              messages. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
