@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,60 +34,69 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 220 30% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 280 70% 50%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 217 33% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 20%;
-    --sidebar-ring: 280 70% 50%;
-    
+    --sidebar-background: 0 0% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 14.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14.9%;
+    --sidebar-ring: 0 0% 83.1%;
+
     --mouse-x: 0;
     --mouse-y: 0;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 0 0% 50%;
+    --chart-2: 0 0% 50%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 50%;
+    --chart-5: 0 0% 50%;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
+
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
+
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
+
     --primary: 0 0% 98%;
     --primary-foreground: 0 0% 9%;
+
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
+
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
+
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
+
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 0 0% 50%;
+    --chart-2: 0 0% 50%;
+    --chart-3: 0 0% 50%;
+    --chart-4: 0 0% 50%;
+    --chart-5: 0 0% 50%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border selection:bg-accent/20 selection:text-white;
+    @apply border-border;
   }
 
   html {
     @apply scroll-smooth;
   }
-  
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
@@ -100,7 +108,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
@@ -108,95 +116,15 @@
   .glass-effect {
     @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
   }
-  
+
   .neo-blur {
     @apply backdrop-blur-2xl bg-black/40 border border-white/10;
   }
-  
+
   .parallax-element {
     transform: translate(
       calc(var(--mouse-x) * -20px),
       calc(var(--mouse-y) * -20px)
     );
-  }
-}
-  
-  .scrollbar-none::-webkit-scrollbar {
-    display: none;
-  }
-
-  .glass-effect {
-    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.3)];
-  }
-  
-  .neo-blur {
-    @apply backdrop-blur-2xl bg-black/40 border border-white/10;
-  }
-  
-  .cosmic-blur {
-    @apply backdrop-blur-md bg-cosmic/80 border border-cosmic-purple/20;
-  }
-  
-  .text-gradient {
-    @apply bg-gradient-cosmic-alt bg-clip-text text-transparent;
-  }
-  
-  .cosmic-shadow {
-    @apply shadow-[0_4px_20px_-2px_rgba(139,92,246,0.3)];
-  }
-  
-  .typing-container {
-    @apply overflow-hidden whitespace-nowrap;
-  }
-  
-  .typing-text {
-    @apply border-r-2 border-primary animate-typing;
-  }
-  
-  .typing-cursor {
-    @apply animate-blink-caret;
-  }
-  
-  .shimmer {
-    @apply bg-shimmer-effect bg-[length:1000px_100%] animate-shimmer;
-  }
-  
-  .cosmic-input {
-    @apply bg-muted/80 backdrop-blur-md border border-border/50 rounded-xl px-4 py-3 
-           focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all 
-           duration-300 placeholder:text-muted-foreground/70;
-  }
-  
-  .cosmic-button {
-    @apply bg-gradient-cosmic-alt hover:opacity-90 text-white rounded-xl
-           px-4 py-2 transition-all duration-300 shadow-md hover:shadow-lg
-           active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  
-  .cosmic-card {
-    @apply bg-card border border-border/50 rounded-xl shadow-md hover:shadow-lg
-           transition-all duration-300;
-  }
-  
-  .cosmic-divider {
-    @apply border-t border-border/50 my-4;
-  }
-  
-  .parallax-element {
-    transform: translate(
-      calc(var(--mouse-x) * -20px),
-      calc(var(--mouse-y) * -20px)
-    );
-  }
-}
-
-
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
