@@ -3,10 +3,13 @@
  *
  * Input component for sending messages in the chat interface.
  * Features auto-resizing textarea, keyboard shortcuts, and loading states.
+ *
+ * Note: Image upload is not currently supported as Gemini 2.0 Flash
+ * does not support image input.
  */
 
 import { FC, FormEvent, useState, useRef, useEffect } from "react";
-import { Send, Mic, Paperclip, ArrowRight } from "lucide-react";
+import { Send, Mic, ArrowRight } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
@@ -63,24 +66,16 @@ const ChatInput: FC<ChatInputProps> = ({ className = "" }) => {
           />
           <div className="flex items-center space-x-2 py-3 pr-4">
             {!isMobile && (
-              <>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                >
-                  <Paperclip size={16} />
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                >
-                  <Mic size={16} />
-                </Button>
-              </>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                title="Voice input (coming soon)"
+                disabled
+              >
+                <Mic size={16} />
+              </Button>
             )}
             <motion.button
               type="submit"
