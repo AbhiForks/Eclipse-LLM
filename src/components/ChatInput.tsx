@@ -1,3 +1,9 @@
+/**
+ * ChatInput.tsx
+ *
+ * Input component for sending messages in the chat interface.
+ * Features auto-resizing textarea, keyboard shortcuts, and loading states.
+ */
 
 import { FC, FormEvent, useState, useRef, useEffect } from "react";
 import { Send, Mic, Paperclip, ArrowRight } from "lucide-react";
@@ -29,7 +35,7 @@ const ChatInput: FC<ChatInputProps> = ({ className = "" }) => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!message.trim() || isGenerating) return;
-    
+
     await sendMessage(message);
     setMessage("");
   };
@@ -58,7 +64,7 @@ const ChatInput: FC<ChatInputProps> = ({ className = "" }) => {
           <div className="flex items-center space-x-2 py-3 pr-4">
             {!isMobile && (
               <>
-                <Button 
+                <Button
                   type="button"
                   variant="ghost"
                   size="icon"
@@ -66,7 +72,7 @@ const ChatInput: FC<ChatInputProps> = ({ className = "" }) => {
                 >
                   <Paperclip size={16} />
                 </Button>
-                <Button 
+                <Button
                   type="button"
                   variant="ghost"
                   size="icon"
@@ -76,15 +82,17 @@ const ChatInput: FC<ChatInputProps> = ({ className = "" }) => {
                 </Button>
               </>
             )}
-            <motion.button 
+            <motion.button
               type="submit"
               disabled={!message.trim() || isGenerating}
               whileTap={{ scale: 0.95 }}
               className={`p-2 rounded-full text-white bg-gradient-to-r from-pink-500 to-purple-600 
                          hover:opacity-90 transition-all
-                         ${(!message.trim() || isGenerating) 
-                           ? "opacity-50 cursor-not-allowed" 
-                           : "opacity-100"}`}
+                         ${
+                           !message.trim() || isGenerating
+                             ? "opacity-50 cursor-not-allowed"
+                             : "opacity-100"
+                         }`}
             >
               {message.trim() ? <Send size={16} /> : <ArrowRight size={16} />}
             </motion.button>
