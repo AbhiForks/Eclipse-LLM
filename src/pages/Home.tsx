@@ -48,11 +48,11 @@ const AnimatedBlob = ({ className = "", delay = 0 }) => {
         rotate: [0, 180, 360]
       }}
       transition={{
-        duration: 5, // Further reduced from 8
+        duration: 20,
         repeat: Infinity,
         repeatType: "reverse",
         ease: "easeInOut",
-        delay: delay * 0.5 // Reduced delay multiplier
+        delay
       }}
     />
   );
@@ -105,11 +105,11 @@ const Home = () => {
       
       {/* Fixed particles */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <FloatingParticle size={8} top="10%" left="10%" duration={8} /> {/* Further reduced from 15 */}
-        <FloatingParticle size={10} top="20%" right="15%" duration={10} delay={1} /> {/* Further reduced from 18, delay from 2 */}
-        <FloatingParticle size={6} bottom="30%" left="20%" duration={7} delay={2} /> {/* Further reduced from 12, delay from 5 */}
-        <FloatingParticle size={12} bottom="20%" right="25%" duration={9} delay={1.5} /> {/* Further reduced from 16, delay from 3 */}
-        <FloatingParticle size={8} top="15%" right="40%" duration={8} delay={3} /> {/* Further reduced from 14, delay from 7 */}
+        <FloatingParticle size={8} top="10%" left="10%" duration={25} />
+        <FloatingParticle size={10} top="20%" right="15%" duration={30} delay={2} />
+        <FloatingParticle size={6} bottom="30%" left="20%" duration={20} delay={5} />
+        <FloatingParticle size={12} bottom="20%" right="25%" duration={28} delay={3} />
+        <FloatingParticle size={8} top="15%" right="40%" duration={22} delay={7} />
       </div>
       
       {/* Header */}
@@ -188,7 +188,7 @@ const Home = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2 }} // Further reduced from 0.4
+          transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
           style={{ opacity: opacityHero }}
         >
@@ -196,7 +196,7 @@ const Home = () => {
             className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: 0.05 }} // Further reduced from 0.4, delay 0.1
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
             <span className="text-white">Seize the</span><br/>
             <span className="bg-gradient-to-r from-purple-500 via-orange-400 to-purple-500 bg-clip-text text-transparent">unexpected</span>
@@ -206,7 +206,7 @@ const Home = () => {
             className="text-lg sm:text-xl text-purple-300 max-w-2xl mx-auto mb-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.2, delay: 0.1 }} // Further reduced from 0.4, delay 0.2
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             Navigate the new challenges of our world with an AI assistant that understands you and helps you push the boundaries of what's possible.
           </motion.p>
@@ -215,7 +215,7 @@ const Home = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, delay: 0.15 }} // Further reduced from 0.4, delay 0.3
+            transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Link to="/chat">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-orange-500 hover:opacity-90 text-white group">
@@ -235,7 +235,7 @@ const Home = () => {
         <motion.div 
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center"
           animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1, repeat: Infinity }} // Reduced from 2
+          transition={{ duration: 2, repeat: Infinity }}
         >
           <p className="text-purple-400 text-sm mb-2">Scroll to explore</p>
           <ChevronDown className="h-6 w-6 text-purple-400" />
@@ -320,7 +320,7 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.25, delay: index * 0.05 }} // Reduced from 0.5, delay index * 0.1
+                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <NewsCard
                   title={news.title}
@@ -405,7 +405,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, titl
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.3 }} // Reduced from 0.6
+      transition={{ duration: 0.6 }}
       whileHover={{ y: -5, boxShadow: "0 10px 30px -10px rgba(139, 92, 246, 0.3)" }}
       className="bg-gradient-to-br from-purple-900/30 to-black border border-purple-500/20 p-6 rounded-xl backdrop-blur-sm"
     >

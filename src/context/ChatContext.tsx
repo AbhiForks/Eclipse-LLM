@@ -43,7 +43,7 @@ const generateId = () => Math.random().toString(36).substring(2, 11);
 // Mock LLM response function (in a real app, this would call an API)
 const mockGenerateResponse = async (message: string): Promise<string> => {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500)); // Further reduced from 1000
+  await new Promise(resolve => setTimeout(resolve, 2000));
   
   // Mock responses based on message content
   if (message.toLowerCase().includes("who are you")) {

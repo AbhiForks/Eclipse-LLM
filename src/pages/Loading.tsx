@@ -13,10 +13,10 @@ const LoadingScreen = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setProgress(prev => {
-        const newProgress = prev + Math.random() * 8; // Increased from 3 to make progress faster
+        const newProgress = prev + Math.random() * 3;
         return newProgress >= 100 ? 100 : newProgress;
       });
-    }, 50); // Reduced from 100ms to 50ms
+    }, 100);
     
     return () => clearInterval(timer);
   }, []);
@@ -25,13 +25,13 @@ const LoadingScreen = () => {
     if (progress >= 100) {
       setTimeout(() => {
         setIsComplete(true);
-      }, 700); // Increased from 200ms by 500ms
+      }, 500);
       
       setTimeout(() => {
         // Store that we've seen the loading screen
         localStorage.setItem('hasSeenLoading', 'true');
         navigate('/home');
-      }, 2500); // Increased from 500ms by 2000ms
+      }, 1500);
     }
   }, [progress, navigate]);
   
@@ -42,7 +42,6 @@ const LoadingScreen = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 2.2 }} // Increased from 0.2 by 2 seconds
       >
         {/* Animated background blobs */}
         <div className="absolute inset-0 overflow-hidden">
@@ -55,7 +54,7 @@ const LoadingScreen = () => {
               x: ["-50%", "-45%", "-50%"],
               y: ["0%", "5%", "0%"]
             }}
-            transition={{ duration: 6, repeat: Infinity, repeatType: "reverse" }} // Increased from 4s by 2 seconds
+            transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
           />
           
           <motion.div
@@ -67,7 +66,7 @@ const LoadingScreen = () => {
               x: ["0%", "5%", "0%"],
               y: ["0%", "-5%", "0%"]
             }}
-            transition={{ duration: 7, repeat: Infinity, repeatType: "reverse", delay: 3 }} // Increased from 5s by 2 seconds, delay from 1s to 3s
+            transition={{ duration: 10, repeat: Infinity, repeatType: "reverse", delay: 2 }}
           />
         </div>
         
@@ -76,7 +75,7 @@ const LoadingScreen = () => {
         
         {/* Mystical particles */}
         <div className="absolute inset-0 opacity-30">
-          {Array.from({ length: 10 }).map((_, i) => (
+          {Array.from({ length: 15 }).map((_, i) => (
             <motion.div
               key={i}
               className="absolute bg-white rounded-full"
@@ -92,9 +91,9 @@ const LoadingScreen = () => {
                 scale: [0, 1, 0]
               }}
               transition={{
-                duration: Math.random() * 3.5 + 3, // Increased from 1.5+1 to 3.5+3
+                duration: Math.random() * 3 + 2,
                 repeat: Infinity,
-                delay: Math.random() * 4 // Increased from 2 to 4
+                delay: Math.random() * 5
               }}
             />
           ))}
@@ -106,7 +105,7 @@ const LoadingScreen = () => {
               className="h-full bg-gradient-to-r from-purple-600 to-orange-500"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              transition={{ ease: "easeInOut", duration: 2.1 }} // Increased from 0.1 by 2 seconds
+              transition={{ ease: "easeInOut" }}
             />
           </div>
           
@@ -115,7 +114,7 @@ const LoadingScreen = () => {
               className="text-purple-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.2 }} // Increased from 0.2 by 2 seconds
+              transition={{ delay: 0.5 }}
             >
               Initializing Eclipse
             </motion.span>
@@ -123,7 +122,7 @@ const LoadingScreen = () => {
               className="text-orange-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.3 }} // Increased from 0.3 by 2 seconds
+              transition={{ delay: 0.7 }}
             >
               {Math.round(progress)}%
             </motion.span>
@@ -134,7 +133,7 @@ const LoadingScreen = () => {
           className="absolute inset-0 bg-black"
           initial={{ opacity: 0 }}
           animate={{ opacity: isComplete ? 1 : 0 }}
-          transition={{ duration: 2.2 }} // Increased from 0.2 by 2 seconds
+          transition={{ duration: 0.5 }}
         />
       </motion.div>
     </AnimatePresence>

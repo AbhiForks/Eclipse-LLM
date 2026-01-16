@@ -89,12 +89,11 @@ const Sidebar = ({ onToggle }) => {
   // Vertical sidebar for desktop
   const renderDesktopSidebar = () => (
     <motion.div
-      className={`fixed left-0 top-0 bottom-0 bg-[#262624] flex flex-col py-4 z-50 transition-all duration-300 ${
+      className={`fixed left-0 top-0 bottom-0 bg-[#121212] flex flex-col py-4 z-50 transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
       initial={false}
       animate={{ width: isCollapsed ? 64 : 256 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
     >
       <div className="px-4 mb-8 cursor-pointer flex items-center justify-center" onClick={toggleSidebar}>
         <Logo variant="minimal" size={32} />
@@ -104,10 +103,9 @@ const Sidebar = ({ onToggle }) => {
       <div className="flex justify-center mb-8">
         <Button 
           onClick={createNewConversation}
-          className="flex items-center gap-2 px-4 py-2 bg-[#d946ef] hover:bg-[#c026d3] rounded-full"
+          className="w-10 h-10 bg-[#d946ef] hover:bg-[#c026d3] rounded-full flex items-center justify-center"
         >
           <Plus size={20} />
-          {!isCollapsed && <span className="font-medium">New Chat</span>}
         </Button>
       </div>
       
@@ -121,8 +119,8 @@ const Sidebar = ({ onToggle }) => {
                     onClick={() => handleExternalLink(item.path, item.description)}
                     className={`flex items-center p-2 rounded-lg ${
                       location.pathname === item.path 
-                        ? "text-[#d946ef] font-medium" 
-                        : "text-gray-300 hover:text-white font-medium"
+                        ? "text-[#d946ef]" 
+                        : "text-gray-400 hover:text-white"
                     } transition-colors`}
                   >
                     <item.icon size={20} />
@@ -140,8 +138,8 @@ const Sidebar = ({ onToggle }) => {
               to={item.path}
               className={`flex items-center p-2 rounded-lg ${
                 location.pathname === item.path 
-                  ? "text-[#d946ef] font-medium" 
-                  : "text-gray-300 hover:text-white font-medium"
+                  ? "text-[#d946ef]" 
+                  : "text-gray-400 hover:text-white"
               } transition-colors`}
             >
               <item.icon size={20} />
@@ -159,16 +157,19 @@ const Sidebar = ({ onToggle }) => {
               alt={user.fullName || "User"} 
               className="w-8 h-8 rounded-full mr-2"
             />
-            {!isCollapsed && <span className="ml-2 font-medium">{user.fullName || user.username}</span>}
+            {!isCollapsed && <span className="ml-2">{user.fullName || user.username}</span>}
           </div>
         )}
-        {/* Removed the Profile link that was here */}
+        <Link to="/profile" className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors">
+          <User size={20} />
+          {!isCollapsed && <span className="ml-2">Profile</span>}
+        </Link>
         <Button 
           onClick={handleSignOut}
-          className="flex items-center p-2 rounded-lg text-gray-300 hover:text-white transition-colors"
+          className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors"
         >
           <Settings size={20} />
-          {!isCollapsed && <span className="ml-2 font-medium">Sign Out</span>}
+          {!isCollapsed && <span className="ml-2">Sign Out</span>}
         </Button>
       </div>
     </motion.div>
@@ -193,15 +194,13 @@ const Sidebar = ({ onToggle }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
             onClick={() => setShowMobileMenu(false)}
           >
             <motion.div 
-              className="absolute left-0 top-0 bottom-0 w-64 bg-[#262624] p-4"
+              className="absolute left-0 top-0 bottom-0 w-64 bg-[#121212] p-4"
               initial={{ x: -300 }}
               animate={{ x: 0 }}
               exit={{ x: -300 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center mb-8">
@@ -260,10 +259,10 @@ const Sidebar = ({ onToggle }) => {
                   </div>
                   <Button 
                     onClick={handleSignOut}
-                    className="flex items-center p-2 rounded-lg text-gray-300 hover:text-white transition-colors"
+                    className="flex items-center p-2 rounded-lg text-gray-400 hover:text-white transition-colors mt-4 w-full justify-start"
                   >
                     <Settings size={20} />
-                    {!isCollapsed && <span className="ml-2 font-medium">Sign Out</span>}
+                    <span className="ml-2">Sign Out</span>
                   </Button>
                 </div>
               )}
