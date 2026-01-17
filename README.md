@@ -11,7 +11,7 @@
 [![React](https://img.shields.io/badge/React-18.3-blue.svg)](https://reactjs.org)
 [![Vite](https://img.shields.io/badge/Vite-5.4-blue.svg)](https://vitejs.dev)
 
-_Access Gemini, GPT-4, Claude, and more — all in one beautiful, unified interface._
+_Access Gemini 3, GPT-5.2, Claude 4.5, Llama 4, and more — all in one beautiful, unified interface._
 
 [🌐 Visit Website](https://eclipse-llm.vercel.app) • [💬 Chat Now](https://eclipse-llm.vercel.app/chat) • [🐙 GitHub](https://github.com/AbhiForks/Eclipse-LLM)
 
@@ -37,13 +37,13 @@ Eclipse LLM is a **modern, open-source AI chat platform** that provides a unifie
 
 Eclipse provides a centralized platform for interacting with multiple AI models:
 
-| Model                | Status         | Description                          |
-| -------------------- | -------------- | ------------------------------------ |
-| **Gemini 2.0 Flash** | ✅ Active      | Google's fastest, most capable model |
-| **GPT-4**            | 🔜 Coming Soon | OpenAI's flagship model              |
-| **Claude**           | 🔜 Coming Soon | Anthropic's helpful AI               |
-| **Llama**            | 🔜 Coming Soon | Meta's open models                   |
-| **Mistral**          | 🔜 Coming Soon | Efficient French AI                  |
+| Model               | Status         | Description                                          |
+| ------------------- | -------------- | ---------------------------------------------------- |
+| **Gemini 3 Pro**    | ✅ Active      | 1M+ token context; strong multimodal integration     |
+| **Gemini 3 Flash**  | ✅ Active      | Cost-efficient; optimized for speed                  |
+| **GPT-5.2**         | 🔜 Coming Soon | Advanced reasoning; "Thinking Mode"; top MMLU scores |
+| **Claude 4.5 Opus** | 🔜 Coming Soon | Excels in coding & creative writing                  |
+| **Llama 4 Scout**   | 🔜 Coming Soon | Open-source; 10M token context window                |
 
 ### 💬 Intelligent Conversation Interface
 
@@ -272,7 +272,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ### Version 2.0 (Q1 2025)
 
-- [ ] Multi-LLM support (GPT-4, Claude, Llama)
+- [ ] Multi-LLM support (GPT-5.2, Claude 4.5 Opus, Llama 4)
 - [ ] Model switching in chat interface
 - [ ] Custom system prompts
 - [ ] Conversation sharing via links
