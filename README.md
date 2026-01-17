@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Eclipse LLM](https://eclipse-llm.vercel.app/og-image.png)
+![Eclipse LLM](https://blog.n8n.io/content/images/size/w1200/2025/01/11-os-llm--1-.jpg)
 
 **The All-In-One Open Source AI Chat Platform**
 
