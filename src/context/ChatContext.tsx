@@ -28,7 +28,6 @@ interface ChatContextType {
   createNewConversation: () => void;
   setCurrentConversation: (id: string) => void;
   sendMessage: (content: string) => Promise<void>;
-  generateResponse: (message: Message) => Promise<void>;
   renameConversation: (id: string, newTitle: string) => void;
   deleteConversation: (id: string) => void;
   shareConversation: (id: string) => void;
@@ -317,87 +316,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [currentConversation, generateResponseWithGemini]);
 
-  const generateResponse = useCallback(async (message: Message) => {
-    if (!currentConversation) return;
-    
-    try {
-      setIsGenerating(true);
-      
-      // Get the last user message to respond to
-      const userMessages = currentConversation.messages.filter(msg => msg.role === "user");
-      const lastUserMessage = userMessages[userMessages.length - 1];
-      
-      console.log("Generating response for message:", lastUserMessage.content);
-      
-      // Generate response using Gemini API
-      const responseContent = await generateResponseWithGemini(lastUserMessage.content);
-      
-      console.log("Generated response:", responseContent);
-      
-      // Update the assistant message with the response
-      const updatedMessages = currentConversation.messages.map(msg => 
-        msg.id === message.id 
-          ? { ...msg, content: responseContent, isLoading: false } 
-          : msg
-      );
-      
-      const updatedConversation = {
-        ...currentConversation,
-        messages: updatedMessages,
-        updatedAt: new Date(),
-      };
-      
-      // Update conversations state
-      setConversations(prevConversations => 
-        prevConversations.map(conv => 
-          conv.id === currentConversation.id ? updatedConversation : conv
-        )
-      );
-      setCurrentConversationState(updatedConversation);
-    } catch (error) {
-      console.error("Error generating response:", error);
-      
-      // Update message to show error
-      const updatedMessages = currentConversation.messages.map(msg => 
-        msg.id === message.id 
-          ? { 
-              ...msg, 
-              content: "I'm sorry, I encountered an error while processing your request.", 
-              isLoading: false 
-            } 
-          : msg
-      );
-      
-      const updatedConversation = {
-        ...currentConversation,
-        messages: updatedMessages,
-        updatedAt: new Date(),
-      };
-      
-      setConversations(prevConversations => 
-        prevConversations.map(conv => 
-          conv.id === currentConversation.id ? updatedConversation : conv
-        )
-      );
-      setCurrentConversationState(updatedConversation);
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [currentConversation]);
-
-  // Context value
-  const value = {
-    conversations,
-    currentConversation,
-    isGenerating,
-    createNewConversation,
-    setCurrentConversation,
-    sendMessage,
-    generateResponse,
-    renameConversation,
-    deleteConversation,
-    shareConversation,
-  };
+   // Context value
+   const value = {
+     conversations,
+     currentConversation,
+     isGenerating,
+     createNewConversation,
+     setCurrentConversation,
+     sendMessage,
+     renameConversation,
+     deleteConversation,
+     shareConversation,
+   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };
