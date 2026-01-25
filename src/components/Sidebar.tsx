@@ -7,12 +7,6 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUser, useClerk } from "@clerk/clerk-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface SidebarProps {
   onToggle?: (collapsed: boolean) => void;
@@ -80,20 +74,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
       icon: "explore",
       label: "AI Compass",
       path: "/ai-compass",
-      isExternal: false,
       description:
         "Subscribe to our daily AI news digest for the latest updates in artificial intelligence.",
     },
   ];
-
-  const handleExternalLink = (url: string, description: string) => {
-    toast({
-      title: "AI Compass Newsletter",
-      description: description,
-      duration: 3000,
-    });
-    window.open(url, "_blank");
-  };
 
   const renderDesktopSidebar = () => (
     <motion.div
@@ -125,52 +109,22 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
       </div>
 
       <div className="flex-1 flex flex-col items-center gap-6">
-        {navItems.map((item) =>
-          item.isExternal ? (
-            <TooltipProvider key={item.label}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() =>
-                      handleExternalLink(item.path, item.description)
-                    }
-                    className={`flex items-center p-2 rounded-lg ${
-                      location.pathname === item.path
-                        ? "text-[#F2EDED]"
-                        : "text-[#B8B2B2] hover:text-[#F2EDED]"
-                    } transition-colors`}
-                  >
-                    <span
-                      className="material-icons"
-                      style={{ fontSize: "20px" }}
-                    >
-                      {item.icon}
-                    </span>
-                    {!isCollapsed && <span className="ml-2">{item.label}</span>}
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{item.description}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <Link
-              key={item.label}
-              to={item.path}
-              className={`flex items-center p-2 rounded-lg ${
-                location.pathname === item.path
-                  ? "text-[#F2EDED]"
-                  : "text-[#B8B2B2] hover:text-[#F2EDED]"
-              } transition-colors`}
-            >
-              <span className="material-icons" style={{ fontSize: "20px" }}>
-                {item.icon}
-              </span>
-              {!isCollapsed && <span className="ml-2">{item.label}</span>}
-            </Link>
-          ),
-        )}
+        {navItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.path}
+            className={`flex items-center p-2 rounded-lg ${
+              location.pathname === item.path
+                ? "text-[#F2EDED]"
+                : "text-[#B8B2B2] hover:text-[#F2EDED]"
+            } transition-colors`}
+          >
+            <span className="material-icons" style={{ fontSize: "20px" }}>
+              {item.icon}
+            </span>
+            {!isCollapsed && <span className="ml-2">{item.label}</span>}
+          </Link>
+        ))}
       </div>
 
       <div className="mt-auto flex flex-col items-center gap-4 pb-4">
@@ -256,45 +210,26 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
               </Button>
 
               <div className="flex flex-col gap-6">
-                {navItems.map((item) =>
-                  item.isExternal ? (
-                    <button
-                      key={item.label}
-                      onClick={() => {
-                        handleExternalLink(item.path, item.description);
-                        setShowMobileMenu(false);
-                      }}
-                      className={`flex items-center p-2 rounded-lg text-[#B8B2B2] hover:text-[#F2EDED] transition-colors`}
+                {navItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.path}
+                    className={`flex items-center p-2 rounded-lg ${
+                      location.pathname === item.path
+                        ? "text-[#F2EDED]"
+                        : "text-[#B8B2B2] hover:text-[#F2EDED]"
+                    } transition-colors`}
+                    onClick={() => setShowMobileMenu(false)}
+                  >
+                    <span
+                      className="material-icons"
+                      style={{ fontSize: "20px" }}
                     >
-                      <span
-                        className="material-icons"
-                        style={{ fontSize: "20px" }}
-                      >
-                        {item.icon}
-                      </span>
-                      <span className="ml-2">{item.label}</span>
-                    </button>
-                  ) : (
-                    <Link
-                      key={item.label}
-                      to={item.path}
-                      className={`flex items-center p-2 rounded-lg ${
-                        location.pathname === item.path
-                          ? "text-[#F2EDED]"
-                          : "text-[#B8B2B2] hover:text-[#F2EDED]"
-                      } transition-colors`}
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <span
-                        className="material-icons"
-                        style={{ fontSize: "20px" }}
-                      >
-                        {item.icon}
-                      </span>
-                      <span className="ml-2">{item.label}</span>
-                    </Link>
-                  ),
-                )}
+                      {item.icon}
+                    </span>
+                    <span className="ml-2">{item.label}</span>
+                  </Link>
+                ))}
               </div>
 
               {user && (
