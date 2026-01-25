@@ -700,12 +700,8 @@ const Home = () => {
                   variant="outline"
                   size="lg"
                   onClick={() => {
-                    const { signIn } = require("@clerk/clerk-react");
-                    signIn.authenticateWithRedirect({
-                      strategy: "oauth_github",
-                      redirectUrl: "/chat",
-                      redirectUrlComplete: "/chat",
-                    });
+                    const signInUrl = "/sign-in";
+                    window.location.href = signInUrl;
                   }}
                   className="h-12 rounded-full border border-[#B8B2B2]/30 bg-[#F2EDED]/5 px-8 text-[#F2EDED] hover:bg-[#F2EDED]/10"
                 >
