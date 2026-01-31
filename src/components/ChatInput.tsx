@@ -8,7 +8,7 @@
  * does not support image input.
  */
 
-import { FC, FormEvent, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type FC, type FormEvent } from "react";
 import { useChat } from "@/context/ChatContext";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
