@@ -60,7 +60,7 @@ const PixelText: FC<PixelTextProps> = ({
   const allPixels: { char: string; row: number; col: number; delay: number }[] =
     [];
   const charXPositions: number[] = [];
-  const currentX = 0;
+  let currentX = 0;
 
   text.split("").forEach((char, charIdx) => {
     const charData = PIXEL_FONT[char.toUpperCase()];
@@ -79,7 +79,7 @@ const PixelText: FC<PixelTextProps> = ({
           }
         });
       });
-      currentX + (charWidth + 1) * pixelSize;
+      currentX += (charWidth + 1) * pixelSize;
     }
   });
 
