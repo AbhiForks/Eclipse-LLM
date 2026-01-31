@@ -5,8 +5,8 @@
  * Supports user and assistant messages with loading animations.
  */
 
-import { FC } from "react";
-import { Message } from "@/context/ChatContext";
+import type { FC } from "react";
+import type { Message } from "@/context/ChatContext";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface ChatMessageProps {
