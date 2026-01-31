@@ -5,7 +5,7 @@
  * and provides actions for renaming, sharing, and deleting conversations.
  */
 
-import { FC, useState } from "react";
+import { useState, type FC } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
