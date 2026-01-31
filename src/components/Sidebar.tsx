@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useChat } from "@/context/ChatContext";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import PixelLogo from "./PixelLogo";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -16,32 +15,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
 
-  const chatContext = (() => {
-    try {
-      return useChat();
-    } catch (e) {
-      return {
-        conversations: [],
-        currentConversation: null,
-        createNewConversation: () => {
-          toast({
-            title: "Chat feature unavailable",
-            description:
-              "Please go to the Chat section to start a conversation",
-          });
-        },
-        setCurrentConversation: () => {},
-        deleteConversation: () => {},
-      };
-    }
-  })();
-
-  const { createNewConversation } = chatContext;
+  const handleCreateNewConversation = () => {
+    // Navigate to chat page where new conversation will be created
+    navigate("/chat");
+    toast({
+      title: "New conversation",
+      description: "Starting a new chat session",
+    });
+  };
 
   const handleSignOut = () => {
     signOut();
@@ -99,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
 
       <div className="flex justify-center mb-8">
         <Button
-          onClick={createNewConversation}
+          onClick={handleCreateNewConversation}
           className="w-10 h-10 bg-[#F2EDED] hover:bg-[#F2EDED]/90 text-[#000000] rounded-full flex items-center justify-center"
         >
           <span className="material-icons" style={{ fontSize: "20px" }}>
@@ -201,7 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
               </div>
 
               <Button
-                onClick={createNewConversation}
+                onClick={handleCreateNewConversation}
                 className="w-10 h-10 bg-[#F2EDED] hover:bg-[#F2EDED]/90 text-[#000000] rounded-full flex items-center justify-center mb-8"
               >
                 <span className="material-icons" style={{ fontSize: "20px" }}>
