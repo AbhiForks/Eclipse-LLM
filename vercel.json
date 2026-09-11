@@ -1,26 +1,7 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/sign-in",
-      "dest": "/dist/index.html"
-    },
-    {
-      "src": "/sign-up",
-      "dest": "/dist/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/dist/index.html"
-    }
+  "rewrites": [
+    { "source": "/sign-in/:path*", "destination": "/index.html" },
+    { "source": "/sign-up/:path*", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
