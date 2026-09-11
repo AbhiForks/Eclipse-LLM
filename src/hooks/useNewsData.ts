@@ -9,6 +9,36 @@ import type { NewsItem } from "@/components/discover/NewsUtils";
 // API configuration
 const BASE_URL = "https://newsapi.org/v2";
 
+// Hacker News official API — free, no key, CORS-open. Always live.
+const fetchHackerNews = async (pageNum: number): Promise<NewsItem[]> => {
+  const idsRes = await fetch("https://hacker-news.firebaseio.com/v0/topstories.json");
+  if (!idsRes.ok) throw new Error("HN topstories failed");
+  const ids = (await idsRes.json()) as number[];
+  const slice = ids.slice((pageNum - 1) * 10, pageNum * 10);
+  const items = await Promise.all(
+    slice.map(async (id) => {
+      const r = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+      if (!r.ok) return null;
+      return (await r.json()) as {
+        id: number; title: string; url?: string; by: string;
+        time: number; score?: number; descendants?: number;
+      } | null;
+    }),
+  );
+  return items
+    .filter((it): it is NonNullable<typeof it> => Boolean(it?.title))
+    .map((it) => ({
+      id: `hn-${it.id}`,
+      title: it.title,
+      description: `▲ ${it.score ?? 0} points · by ${it.by} · ${it.descendants ?? 0} comments — discuss on Hacker News`,
+      source: "Hacker News",
+      imageUrl: "",
+      date: new Date((it.time ?? Date.now() / 1000) * 1000).toRelativeTime(),
+      category: "technology",
+      url: it.url ?? `https://news.ycombinator.com/item?id=${it.id}`,
+    }));
+};
+
 // Add relative time method to Date prototype if not exists
 if (!Date.prototype.toRelativeTime) {
   Date.prototype.toRelativeTime = function () {
@@ -55,6 +85,18 @@ export const useNewsData = (initialCategory: string = "for-you") => {
 
       try {
         const categoryQuery = getCategoryQuery(activeCategory);
+
+        // Tech runs on the free Hacker News API — always live, no key needed.
+        if (activeCategory === "tech") {
+          const hn = await fetchHackerNews(currentPage);
+          setNewsItems((prev) => (reset ? hn : [...prev, ...hn]));
+          setHasMore(hn.length === 10);
+          if (!reset) setPage((prev) => prev + 1);
+          setIsLoading(false);
+          setIsFetchingMore(false);
+          return;
+        }
+
         const apiKey = import.meta.env.VITE_NEWSAPI_KEY;
 
         if (!apiKey) {
@@ -184,5 +226,8 @@ export const useNewsData = (initialCategory: string = "for-you") => {
     activeCategory,
     loadMoreRef,
     handleCategoryChange,
+    loadMore: () => {
+      void fetchNews(false);
+    },
   };
 };

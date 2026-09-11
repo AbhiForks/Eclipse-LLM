@@ -3,10 +3,13 @@ import { BookOpen, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import SourceArt from "@/components/discover/SourceArt";
 import type { NewsItem } from "./NewsUtils";
 
 const FeaturedNews = ({ news }: { news: NewsItem }) => {
   const [saved, setSaved] = useState(false);
+  const hasRealImage = Boolean(news.imageUrl) && !news.imageUrl.includes("placehold.co");
+  const [imgOk, setImgOk] = useState(true);
   const openArticle = () => {
     if (news.url) window.open(news.url, "_blank", "noopener,noreferrer");
   };
