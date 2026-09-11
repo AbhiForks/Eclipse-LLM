@@ -42,7 +42,10 @@ export interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 // Generate a unique ID
-const generateId = () => Math.random().toString(36).substring(2, 11);
+const generateId = () =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID().slice(0, 11)
+    : Math.random().toString(36).substring(2, 11);
 
 // Mock LLM response function (in a real app, this would call an API)
 const mockGenerateResponse = async (message: string): Promise<string> => {
@@ -80,19 +83,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   const { toast } = useToast();
 
   // Generate a response for the assistant using Gemini API
+  // NOTE: client-side keys are visible in the browser. For production,
+  // proxy via /api/chat and keep GEMINI_API_KEY server-side.
   const generateResponseWithGemini = async (
     message: string,
   ): Promise<string> => {
     try {
-      // Use the provided API key
-      const apiKey = "${import.meta.env.VITE_GEMINI_API_KEY}";
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
 
-      console.log("Calling Gemini API with message:", message);
+      if (!apiKey) {
+        return await mockGenerateResponse(message);
+      }
 
       const endpoint =
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
 
-      const response = await fetch(`${endpoint}?key=${apiKey}`, {
+      const response = await fetch(`${endpoint}?key=${encodeURIComponent(apiKey)}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,16 +112,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         }),
       });
 
-      console.log("API response status:", response.status);
-
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error("Gemini API error response:", errorData);
         return await mockGenerateResponse(message);
       }
 
       const data = await response.json();
-      console.log("Gemini API response data:", data);
 
       if (
         data.candidates &&
@@ -126,7 +127,6 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
       ) {
         return data.candidates[0].content.parts[0].text;
       } else {
-        console.error("Unexpected API response structure:", data);
         return await mockGenerateResponse(message);
       }
     } catch (error) {

@@ -65,13 +65,11 @@ export const useNewsData = (initialCategory: string = "for-you") => {
           return;
         }
 
-        let endpoint = `${BASE_URL}/top-headlines?apiKey=${apiKey}&language=en&page=${currentPage}&pageSize=10`;
+        let endpoint = `${BASE_URL}/top-headlines?apiKey=${encodeURIComponent(apiKey)}&language=en&page=${currentPage}&pageSize=10`;
 
         if (categoryQuery) {
-          endpoint += `&category=${categoryQuery}`;
+          endpoint += `&category=${encodeURIComponent(categoryQuery)}`;
         }
-
-        console.log("Fetching news from:", endpoint);
 
         const response = await fetch(endpoint);
         const data = await response.json();
