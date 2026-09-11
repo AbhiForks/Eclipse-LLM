@@ -97,11 +97,14 @@ export const useNewsData = (initialCategory: string = "for-you") => {
           return;
         }
 
-        const apiKey = import.meta.env.VITE_NEWSAPI_KEY;
+        const rawKey = import.meta.env.VITE_NEWSAPI_KEY as string | undefined;
+        // Treat empty / template placeholder keys as "no key" — use backup silently.
+        const apiKey =
+          rawKey && !/your_|YOUR_|example|xxx|placeholder/i.test(rawKey) ? rawKey : undefined;
 
         if (!apiKey) {
-          console.warn("NewsAPI key not configured");
           setNewsItems(getBackupNewsData(activeCategory));
+          setHasMore(false);
           setIsLoading(false);
           setIsFetchingMore(false);
           return;

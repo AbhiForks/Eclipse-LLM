@@ -89,7 +89,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     message: string,
   ): Promise<string> => {
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+      const rawKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+      const apiKey =
+        rawKey && !/your_|YOUR_|example|xxx|placeholder/i.test(rawKey) ? rawKey : undefined;
 
       if (!apiKey) {
         return await mockGenerateResponse(message);
