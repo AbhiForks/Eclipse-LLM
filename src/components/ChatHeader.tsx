@@ -1,16 +1,9 @@
-/**
- * ChatHeader.tsx
- *
- * Header component for the chat interface that displays the conversation title
- * and provides actions for renaming, sharing, and deleting conversations.
- */
-
 import { useState, type FC } from "react";
+import { MoreVertical, Pencil, Share2, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -33,7 +26,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import PixelLogo from "./PixelLogo";
 import { useChat } from "@/context/ChatContext";
 
 interface ChatHeaderProps {
@@ -41,147 +33,78 @@ interface ChatHeaderProps {
   actions?: React.ReactNode;
 }
 
-const ChatHeader: FC<ChatHeaderProps> = ({
-  title = "New Conversation",
-  actions,
-}) => {
-  const {
-    currentConversation,
-    renameConversation,
-    deleteConversation,
-    shareConversation,
-  } = useChat();
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+const ChatHeader: FC<ChatHeaderProps> = ({ title = "New Conversation", actions }) => {
+  const { currentConversation, renameConversation, deleteConversation, shareConversation } = useChat();
+  const [isRenameOpen, setIsRenameOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(title);
 
-  const handleRename = () => {
-    if (currentConversation) {
-      renameConversation(currentConversation.id, newTitle);
-      setIsRenameDialogOpen(false);
-    }
-  };
-
-  const handleDelete = () => {
-    if (currentConversation) {
-      deleteConversation(currentConversation.id);
-      setIsDeleteDialogOpen(false);
-    }
-  };
-
-  const handleShare = () => {
-    if (currentConversation) {
-      shareConversation(currentConversation.id);
-    }
-  };
-
   return (
-    <div className="flex items-center justify-between p-4 border-b border-[#B8B2B2]/10 bg-[#000000]">
-      <div className="flex items-center gap-4">
-        <PixelLogo size={32} animated={false} showText={false} />
-        <h1 className="text-lg font-medium text-[#F2EDED]">{title}</h1>
-      </div>
-      <div className="flex items-center gap-2">
-        {actions ? (
-          actions
-        ) : (
+    <div className="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-background px-3 sm:px-5">
+      <h1 className="min-w-0 flex-1 truncate text-base font-medium sm:text-lg">{title}</h1>
+      <div className="flex shrink-0 items-center gap-1">
+        {actions ?? (
           <>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Rename conversation"
+              onClick={() => {
+                setNewTitle(title);
+                setIsRenameOpen(true);
+              }}
+            >
+              <Pencil className="h-[18px] w-[18px]" />
+            </Button>
+            <Button variant="ghost" size="icon" aria-label="Share conversation" onClick={() => currentConversation && shareConversation(currentConversation.id)}>
+              <Share2 className="h-[18px] w-[18px]" />
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
-                >
-                  <span className="material-icons" style={{ fontSize: "18px" }}>
-                    edit
-                  </span>
+                <Button variant="ghost" size="icon" aria-label="More actions">
+                  <MoreVertical className="h-[18px] w-[18px]" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => {
-                    setNewTitle(title);
-                    setIsRenameDialogOpen(true);
-                  }}
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setIsDeleteOpen(true)}
                 >
-                  Rename
+                  <Trash2 className="mr-2 h-4 w-4" /> Delete conversation
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
-              onClick={handleShare}
-            >
-              <span className="material-icons" style={{ fontSize: "18px" }}>
-                share
-              </span>
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
-                >
-                  <span className="material-icons" style={{ fontSize: "18px" }}>
-                    delete
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  className="text-[#EF4444] focus:text-[#EF4444]"
-                  onClick={() => setIsDeleteDialogOpen(true)}
-                >
-                  Delete conversation
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-[#B8B2B2] hover:text-[#F2EDED] hover:bg-[#F2EDED]/10"
-            >
-              <span className="material-icons" style={{ fontSize: "18px" }}>
-                settings
-              </span>
-            </Button>
           </>
         )}
       </div>
 
-      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+      <Dialog open={isRenameOpen} onOpenChange={setIsRenameOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Rename conversation</DialogTitle>
-            <DialogDescription>
-              Change the title of this conversation.
-            </DialogDescription>
+            <DialogDescription>Change the title of this conversation.</DialogDescription>
           </DialogHeader>
           <Input
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Conversation title"
-            className="mt-2 bg-[#0A0A0A] border-[#B8B2B2]/20 text-[#F2EDED]"
             autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && currentConversation && newTitle.trim()) {
+                renameConversation(currentConversation.id, newTitle);
+                setIsRenameOpen(false);
+              }
+            }}
           />
           <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRenameOpen(false)}>Cancel</Button>
             <Button
-              variant="outline"
-              onClick={() => setIsRenameDialogOpen(false)}
-              className="border-[#B8B2B2]/30 text-[#F2EDED] hover:bg-[#F2EDED]/10"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleRename}
-              className="bg-[#F2EDED] text-[#000000] hover:bg-[#F2EDED]/90"
+              onClick={() => {
+                if (currentConversation && newTitle.trim()) {
+                  renameConversation(currentConversation.id, newTitle);
+                  setIsRenameOpen(false);
+                }
+              }}
             >
               Save
             </Button>
@@ -189,25 +112,19 @@ const ChatHeader: FC<ChatHeaderProps> = ({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete conversation</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this conversation and all its
-              messages. This action cannot be undone.
+              This will permanently delete this conversation and all its messages. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-[#B8B2B2]/30 text-[#F2EDED] hover:bg-[#F2EDED]/10">
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-[#EF4444] text-white hover:bg-[#EF4444]/90"
+              onClick={() => currentConversation && deleteConversation(currentConversation.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
