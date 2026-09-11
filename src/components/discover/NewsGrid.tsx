@@ -1,22 +1,8 @@
-
-import { motion } from "framer-motion";
+import { ExternalLink, Loader2 } from "lucide-react";
 import NewsCard from "@/components/NewsCard";
-import { Loader2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getGoogleNewsUrl } from "./NewsUtils";
-
-interface NewsItem {
-  id: string;
-  title: string;
-  description: string;
-  source: string;
-  author?: string;
-  imageUrl: string;
-  date: string;
-  category: string;
-  url: string;
-  commentCount?: number;
-}
+import type { NewsItem } from "./NewsUtils";
 
 interface NewsGridProps {
   newsItems: NewsItem[];
@@ -26,62 +12,45 @@ interface NewsGridProps {
   category: string;
 }
 
-const NewsGrid = ({ newsItems, isFetchingMore, hasMore, loadMoreRef, category }: NewsGridProps) => {
-  const openGoogleNews = () => {
-    window.open(getGoogleNewsUrl(category), '_blank');
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4">
-        {newsItems.map((news, index) => (
-          <motion.div
-            key={news.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 + (index % 10) * 0.05 }}
-          >
-            <NewsCard 
-              title={news.title}
-              author={news.author || news.source}
-              imageUrl={news.imageUrl}
-              date={news.date}
-              commentCount={news.commentCount || Math.floor(Math.random() * 100)}
-              index={index + 1}
-              onClick={() => window.open(news.url, '_blank')}
-              hasActions
-            />
-          </motion.div>
-        ))}
-      </div>
-      
-      {/* Google News Link */}
-      <div className="flex justify-center my-4">
-        <Button 
-          variant="outline" 
-          className="flex items-center gap-2 border-[#d946ef] text-[#d946ef] hover:bg-[#d946ef]/10"
-          onClick={openGoogleNews}
-        >
-          <ExternalLink size={16} />
-          More from Google News
-        </Button>
-      </div>
-      
-      {/* Loader for infinite scrolling */}
-      <div ref={loadMoreRef} className="py-8 flex justify-center">
-        {isFetchingMore && (
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-5 w-5 text-[#d946ef] animate-spin" />
-            <p className="text-sm text-gray-400">Loading more stories...</p>
-          </div>
-        )}
-        
-        {!hasMore && newsItems.length > 0 && (
-          <p className="text-sm text-gray-500">No more stories to load</p>
-        )}
-      </div>
+const NewsGrid = ({ newsItems, isFetchingMore, hasMore, loadMoreRef, category }: NewsGridProps) => (
+  <div className="flex flex-col gap-4">
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+      {newsItems.map((news) => (
+        <NewsCard
+          key={news.id}
+          title={news.title}
+          description={news.description}
+          source={news.source}
+          author={news.author}
+          imageUrl={news.imageUrl}
+          date={news.date}
+          url={news.url}
+        />
+      ))}
     </div>
-  );
-};
+
+    <div className="flex justify-center py-2">
+      <Button
+        variant="outline"
+        className="gap-2"
+        onClick={() => window.open(getGoogleNewsUrl(category), "_blank", "noopener,noreferrer")}
+      >
+        <ExternalLink className="h-4 w-4" />
+        More from Google News
+      </Button>
+    </div>
+
+    <div ref={loadMoreRef} className="flex justify-center py-4">
+      {isFetchingMore && (
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading more stories…
+        </p>
+      )}
+      {!hasMore && newsItems.length > 0 && !isFetchingMore && (
+        <p className="text-sm text-muted-foreground">You&apos;re all caught up</p>
+      )}
+    </div>
+  </div>
+);
 
 export default NewsGrid;

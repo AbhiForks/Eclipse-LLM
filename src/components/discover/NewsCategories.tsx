@@ -1,15 +1,13 @@
-
-import { ThumbsUp, Zap, Globe, DollarSign, Music, Trophy } from "lucide-react";
+import { DollarSign, Globe, Music, ThumbsUp, Trophy, Zap } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// News categories
 export const categories = [
-  { id: "for-you", label: "For You", icon: <ThumbsUp size={16} /> },
-  { id: "top", label: "Top", icon: <Zap size={16} /> },
-  { id: "tech", label: "Tech & Science", icon: <Globe size={16} /> },
-  { id: "finance", label: "Finance", icon: <DollarSign size={16} /> },
-  { id: "arts", label: "Arts & Culture", icon: <Music size={16} /> },
-  { id: "sports", label: "Sports", icon: <Trophy size={16} /> }
+  { id: "for-you", label: "For You", icon: ThumbsUp },
+  { id: "top", label: "Top", icon: Zap },
+  { id: "tech", label: "Tech & Science", icon: Globe },
+  { id: "finance", label: "Finance", icon: DollarSign },
+  { id: "arts", label: "Arts & Culture", icon: Music },
+  { id: "sports", label: "Sports", icon: Trophy },
 ];
 
 interface NewsCategoriesProps {
@@ -17,23 +15,17 @@ interface NewsCategoriesProps {
   onCategoryChange: (category: string) => void;
 }
 
-const NewsCategories = ({ activeCategory, onCategoryChange }: NewsCategoriesProps) => {
-  return (
-    <Tabs defaultValue={activeCategory} className="mb-6" onValueChange={onCategoryChange}>
-      <TabsList className="bg-[#1e1e1e] p-1 overflow-x-auto w-full flex space-x-1 scrollbar-none">
-        {categories.map(category => (
-          <TabsTrigger 
-            key={category.id} 
-            value={category.id}
-            className="flex items-center gap-2 px-4 py-2 data-[state=active]:bg-[#d946ef] data-[state=active]:text-white"
-          >
-            {category.icon}
-            {category.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
-  );
-};
+const NewsCategories = ({ activeCategory, onCategoryChange }: NewsCategoriesProps) => (
+  <Tabs value={activeCategory} onValueChange={onCategoryChange}>
+    <TabsList className="flex w-full justify-start gap-1 overflow-x-auto scrollbar-none">
+      {categories.map(({ id, label, icon: Icon }) => (
+        <TabsTrigger key={id} value={id} className="flex shrink-0 items-center gap-1.5">
+          <Icon className="h-4 w-4" />
+          {label}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  </Tabs>
+);
 
 export default NewsCategories;
