@@ -59,7 +59,7 @@ if (!Date.prototype.toRelativeTime) {
   };
 }
 
-export const useNewsData = (initialCategory: string = "for-you") => {
+export const useNewsData = (initialCategory: string = "tech") => {
   const { toast } = useToast();
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
