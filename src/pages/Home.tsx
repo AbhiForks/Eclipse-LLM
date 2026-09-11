@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Badge } from "@/components/ui/badge";
 
 const MODELS = ["Gemini 3 Pro", "Gemini 3 Flash", "GPT-5.2", "Claude 4.5", "Llama 4"];
 
@@ -53,9 +52,9 @@ const Home = () => {
         />
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-4 pb-16 text-center sm:gap-8 sm:px-6 sm:pb-24">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-            <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1 text-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-muted/40 px-3 py-1 text-xs text-muted-foreground">
               <Sparkles className="h-3.5 w-3.5" /> Multi-model chat, minus the tab hell
-            </Badge>
+            </span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
