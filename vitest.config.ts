@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": join(__dirname, "src"),  // This enables "@/components/" imports
+      "@": join(import.meta.dirname, "src"), // This enables "@/components/" imports
       "@testing-library/jest-dom": "@testing-library/jest-dom"
     }
   },

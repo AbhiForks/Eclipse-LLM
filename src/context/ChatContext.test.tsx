@@ -3,9 +3,8 @@
  */
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   ChatProvider,
   useChat,
@@ -13,40 +12,18 @@ import {
   Conversation,
 } from "../context/ChatContext";
 
-// Create a wrapper component that provides the necessary context
+// Wrapper providing the context ChatProvider needs (no data-fetching lib involved)
 const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ChatProvider>{children}</ChatProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <ChatProvider>{children}</ChatProvider>
+    </BrowserRouter>
   );
 };
 
 describe("ChatContext", () => {
-  let queryClient: QueryClient;
-
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-  });
-
-  afterEach(() => {
-    queryClient.clear();
+    vi.clearAllMocks();
   });
 
   it("provides initial empty conversations array", () => {
@@ -57,15 +34,7 @@ describe("ChatContext", () => {
       );
     };
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <ChatProvider>
-            <TestComponent />
-          </ChatProvider>
-        </BrowserRouter>
-      </QueryClientProvider>,
-    );
+    render(<TestComponent />, { wrapper: createWrapper() });
 
     expect(screen.getByTestId("conversations-count")).toHaveTextContent("1");
   });
@@ -83,15 +52,7 @@ describe("ChatContext", () => {
       );
     };
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <ChatProvider>
-            <TestComponent />
-          </ChatProvider>
-        </BrowserRouter>
-      </QueryClientProvider>,
-    );
+    render(<TestComponent />, { wrapper: createWrapper() });
 
     const createBtn = screen.getByTestId("create-btn");
     fireEvent.click(createBtn);
