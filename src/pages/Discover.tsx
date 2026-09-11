@@ -1,6 +1,7 @@
 import AppShell from "@/components/AppShell";
 import NewsCategories from "@/components/discover/NewsCategories";
 import FeaturedNews from "@/components/discover/FeaturedNews";
+import HackerNewsReader from "@/components/discover/HackerNewsReader";
 import NewsGrid from "@/components/discover/NewsGrid";
 import NewsLoader from "@/components/discover/NewsLoader";
 import { useNewsData } from "@/hooks/useNewsData";
@@ -14,9 +15,11 @@ const Discover = () => {
     activeCategory,
     loadMoreRef,
     handleCategoryChange,
+    loadMore,
   } = useNewsData();
 
   const [featured, ...rest] = newsItems;
+  const isHackerNews = activeCategory === "tech";
 
   return (
     <AppShell
@@ -29,8 +32,17 @@ const Discover = () => {
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-5 sm:px-6 sm:py-6">
         <NewsCategories activeCategory={activeCategory} onCategoryChange={handleCategoryChange} />
-        {isLoading ? (
+        {isLoading && newsItems.length === 0 ? (
           <NewsLoader />
+        ) : isHackerNews ? (
+          <HackerNewsReader
+            stories={newsItems}
+            isLoading={isLoading}
+            isFetchingMore={isFetchingMore}
+            hasMore={hasMore}
+            loadMoreRef={loadMoreRef}
+            onLoadMore={loadMore}
+          />
         ) : (
           <>
             {featured && <FeaturedNews news={featured} />}

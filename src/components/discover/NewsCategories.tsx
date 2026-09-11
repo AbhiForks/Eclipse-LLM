@@ -1,10 +1,10 @@
-import { DollarSign, Globe, Music, ThumbsUp, Trophy, Zap } from "lucide-react";
+import { DollarSign, Music, Terminal, ThumbsUp, Trophy, Zap } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const categories = [
   { id: "for-you", label: "For You", icon: ThumbsUp },
   { id: "top", label: "Top", icon: Zap },
-  { id: "tech", label: "Tech & Science", icon: Globe },
+  { id: "tech", label: "Hacker News", icon: Terminal },
   { id: "finance", label: "Finance", icon: DollarSign },
   { id: "arts", label: "Arts & Culture", icon: Music },
   { id: "sports", label: "Sports", icon: Trophy },
