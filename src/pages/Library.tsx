@@ -1,29 +1,26 @@
-/**
- * Library.tsx
- *
- * Page for browsing and managing saved conversations.
- * Provides search, filtering, and CRUD operations for conversations.
- */
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import Sidebar from "@/components/Sidebar";
+import { useNavigate } from "react-router-dom";
 import {
-  Search,
-  LibraryBig,
+  ArrowUpRight,
+  BookOpen,
   Clock,
-  Star,
-  FilterX,
   Edit,
+  FileText,
+  FilterX,
+  LibraryBig,
+  Loader2,
   MessageSquare,
-  CalendarDays,
+  MessagesSquare,
+  Search,
   Trash2,
 } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
+import { useArxiv, ARXIV_CATS } from "@/hooks/useArxiv";
+import AppShell from "@/components/AppShell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +28,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -42,289 +38,191 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
-const Library = () => {
-  const {
-    conversations,
-    setCurrentConversation,
-    renameConversation,
-    deleteConversation,
-  } = useChat();
+const ChatsTab = () => {
+  const { conversations, setCurrentConversation, renameConversation, deleteConversation } =
+    useChat();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedConversation, setSelectedConversation] = useState<
-    string | null
-  >(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [renameOpen, setRenameOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  // Filter conversations based on search term
-  const filteredConversations = conversations.filter((conversation) =>
-    conversation.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const filtered = conversations.filter((c) => {
+    if (!c.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    if (filter === "recent") return new Date(c.updatedAt).getTime() >= weekAgo;
+    return true;
+  });
 
-  // Group conversations by date
-  const groupedConversations = filteredConversations.reduce(
-    (groups, conversation) => {
-      const date = new Date(conversation.updatedAt);
-      const dateString = date.toLocaleDateString("en-US", {
+  const grouped = filtered.reduce(
+    (groups, c) => {
+      const key = new Date(c.updatedAt).toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric",
       });
-
-      if (!groups[dateString]) {
-        groups[dateString] = [];
-      }
-
-      groups[dateString].push(conversation);
+      (groups[key] ??= []).push(c);
       return groups;
     },
     {} as Record<string, typeof conversations>,
   );
 
-  const handleRename = () => {
-    if (selectedConversation && newTitle.trim()) {
-      renameConversation(selectedConversation, newTitle);
-      setIsRenameDialogOpen(false);
-      setNewTitle("");
-    }
-  };
-
-  const handleDelete = () => {
-    if (selectedConversation) {
-      deleteConversation(selectedConversation);
-      setIsDeleteDialogOpen(false);
-    }
-  };
-
-  const openRenameDialog = (id: string, title: string) => {
-    setSelectedConversation(id);
-    setNewTitle(title);
-    setIsRenameDialogOpen(true);
-  };
-
-  const openDeleteDialog = (id: string) => {
-    setSelectedConversation(id);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleChatSelect = (id: string) => {
-    setCurrentConversation(id);
-    navigate("/chat");
-  };
-
   return (
-    <div className="flex min-h-screen w-full bg-background text-foreground">
-      <Sidebar onToggle={setSidebarCollapsed} />
-      <main
-        className={`flex-1 ${isMobile ? "pl-0" : sidebarCollapsed ? "ml-16" : "ml-64"}`}
-      >
-        <div className="max-w-5xl mx-auto px-4 py-8">
-          <div className="flex items-center mb-8">
-            <LibraryBig className="mr-3 text-primary" size={24} />
-            <h1 className="text-2xl font-bold text-gradient">Library</h1>
-          </div>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3 md:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search conversations…"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Tabs value={filter} onValueChange={setFilter} className="w-full md:w-auto">
+          <TabsList>
+            <TabsTrigger value="all" className="flex-1 md:flex-initial">All</TabsTrigger>
+            <TabsTrigger value="recent" className="flex-1 md:flex-initial">Recent</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
 
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                size={18}
-              />
-              <Input
-                type="text"
-                placeholder="Search conversations..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-muted/30 border-border/30 focus-visible:ring-primary/30"
-              />
-            </div>
-
-            <Tabs
-              defaultValue="all"
-              onValueChange={setFilter}
-              className="w-full md:w-auto"
-            >
-              <TabsList className="bg-muted/30 w-full md:w-auto">
-                <TabsTrigger value="all" className="flex-1 md:flex-initial">
-                  All
-                </TabsTrigger>
-                <TabsTrigger value="starred" className="flex-1 md:flex-initial">
-                  Starred
-                </TabsTrigger>
-                <TabsTrigger value="recent" className="flex-1 md:flex-initial">
-                  Recent
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-
-          {filteredConversations.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-10 text-center">
-              <div className="bg-muted/20 p-4 rounded-full mb-4">
-                <FilterX size={32} className="text-muted-foreground" />
-              </div>
-              <h3 className="text-xl font-medium mb-2">
-                No conversations found
-              </h3>
-              <p className="text-muted-foreground max-w-md">
-                {searchTerm
-                  ? "We couldn't find any conversations matching your search. Try a different term."
-                  : "You haven't had any conversations yet. Start a new chat to begin."}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {Object.entries(groupedConversations).map(([date, convos]) => (
-                <div key={date}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <CalendarDays size={16} className="text-muted-foreground" />
-                    <h3 className="text-sm font-medium text-muted-foreground">
-                      {date}
-                    </h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {convos.map((conversation) => (
-                      <motion.div
-                        key={conversation.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ duration: 0.2 }}
-                        className="bg-card/70 border border-border/30 rounded-xl p-4 cursor-pointer hover:border-primary/30 hover:shadow-md transition-all"
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 py-14 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-muted/40">
+            <FilterX className="h-6 w-6 text-muted-foreground" />
+          </span>
+          <h3 className="font-medium">No conversations found</h3>
+          <p className="max-w-md text-sm text-muted-foreground">
+            {searchTerm
+              ? "Try a different search term."
+              : "Start a new chat to begin your library."}
+          </p>
+          <Button
+            onClick={() => {
+              toast({ title: "New conversation", description: "Starting a new chat session" });
+              navigate("/chat");
+            }}
+          >
+            New chat
+          </Button>
+        </div>
+      ) : (
+        Object.entries(grouped).map(([date, convos]) => (
+          <section key={date}>
+            <h3 className="mb-3 text-sm font-medium text-muted-foreground">{date}</h3>
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {convos.map((c) => (
+                <motion.article
+                  key={c.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  onClick={() => {
+                    setCurrentConversation(c.id);
+                    navigate("/chat");
+                  }}
+                  className="card-hover cursor-pointer rounded-2xl border border-border/70 bg-muted/20 p-4"
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground/10">
+                      <MessageSquare className="h-4 w-4" />
+                    </span>
+                    <span className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        aria-label="Rename"
+                        onClick={() => {
+                          setSelectedId(c.id);
+                          setNewTitle(c.title);
+                          setRenameOpen(true);
+                        }}
                       >
-                        <div className="flex justify-between mb-2">
-                          <div className="bg-primary/20 rounded-full p-1.5">
-                            <MessageSquare size={16} className="text-primary" />
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 rounded-full hover:bg-muted/30"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openRenameDialog(
-                                  conversation.id,
-                                  conversation.title,
-                                );
-                              }}
-                            >
-                              <Edit
-                                size={14}
-                                className="text-muted-foreground"
-                              />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 rounded-full hover:bg-muted/30 hover:text-red-500"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openDeleteDialog(conversation.id);
-                              }}
-                            >
-                              <Trash2
-                                size={14}
-                                className="text-muted-foreground"
-                              />
-                            </Button>
-                          </div>
-                        </div>
-                        <div onClick={() => handleChatSelect(conversation.id)}>
-                          <h3 className="font-medium mb-1 truncate">
-                            {conversation.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                            {conversation.messages.length > 1
-                              ? conversation.messages[1]?.content?.slice(
-                                  0,
-                                  100,
-                                ) + "..."
-                              : "No messages yet"}
-                          </p>
-                          <div className="flex items-center text-xs text-muted-foreground">
-                            <Clock size={12} className="mr-1" />
-                            <span>
-                              {new Date(
-                                conversation.updatedAt,
-                              ).toLocaleTimeString("en-US", {
-                                hour: "numeric",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
-                            </span>
-                            <span className="mx-2">•</span>
-                            <span>{conversation.messages.length} messages</span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                        <Edit className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 hover:text-destructive"
+                        aria-label="Delete"
+                        onClick={() => {
+                          setSelectedId(c.id);
+                          setDeleteOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
                   </div>
-                </div>
+                  <h4 className="truncate font-medium">{c.title}</h4>
+                  <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                    {c.messages.length > 1
+                      ? `${c.messages[1]?.content?.slice(0, 100)}…`
+                      : "No messages yet"}
+                  </p>
+                  <p className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+                    <Clock className="h-3 w-3" />
+                    {new Date(c.updatedAt).toLocaleTimeString("en-US", {
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                    <span className="mx-1">·</span> {c.messages.length} messages
+                  </p>
+                </motion.article>
               ))}
             </div>
-          )}
-        </div>
-      </main>
+          </section>
+        ))
+      )}
 
-      {/* Rename Dialog */}
-      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Rename Conversation</DialogTitle>
-            <DialogDescription>
-              Enter a new name for this conversation
-            </DialogDescription>
+            <DialogTitle>Rename conversation</DialogTitle>
+            <DialogDescription>Enter a new name for this conversation.</DialogDescription>
           </DialogHeader>
           <Input
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="New conversation title"
             autoFocus
-            className="my-4"
           />
           <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameOpen(false)}>Cancel</Button>
             <Button
-              variant="outline"
-              onClick={() => setIsRenameDialogOpen(false)}
+              onClick={() => {
+                if (selectedId && newTitle.trim()) {
+                  renameConversation(selectedId, newTitle);
+                  setRenameOpen(false);
+                }
+              }}
             >
-              Cancel
+              Save
             </Button>
-            <Button onClick={handleRename}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Conversation</AlertDialogTitle>
+            <AlertDialogTitle>Delete conversation</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this
-              conversation and remove it from our servers.
+              This will permanently delete this conversation. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-500 hover:bg-red-600"
+              onClick={() => selectedId && deleteConversation(selectedId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
@@ -332,6 +230,127 @@ const Library = () => {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+};
+
+const ArxivTab = () => {
+  const { papers, isLoading, query, setQuery, search } = useArxiv();
+
+  return (
+    <div className="flex flex-col gap-4">
+      <form
+        className="flex flex-col gap-2 sm:flex-row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          search(query.startsWith("cat:") || query.startsWith("all:") ? query : `all:${query}`);
+        }}
+      >
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search arXiv — try ‘diffusion’, ‘all:transformer’…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button type="submit">Search</Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="gap-1.5"
+            onClick={() => window.open("https://arxiv.org", "_blank", "noopener,noreferrer")}
+          >
+            arxiv.org <ArrowUpRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </form>
+
+      <div className="flex flex-wrap gap-2">
+        {ARXIV_CATS.map((c) => (
+          <Button
+            key={c.id}
+            variant="secondary"
+            size="sm"
+            onClick={() => {
+              setQuery(`cat:${c.id}`);
+              search(`cat:${c.id}`);
+            }}
+          >
+            {c.label}
+          </Button>
+        ))}
+      </div>
+
+      {isLoading ? (
+        <p className="flex items-center justify-center gap-2 py-14 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Querying arXiv…
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+          {papers.map((p) => (
+            <article
+              key={p.id}
+              className="card-hover flex flex-col gap-2 rounded-2xl border border-border/70 bg-muted/20 p-4"
+            >
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <FileText className="h-3.5 w-3.5" /> arXiv:{p.id} · {p.published}
+              </p>
+              <h4 className="font-medium leading-snug">{p.title}</h4>
+              <p className="truncate text-xs text-muted-foreground">
+                {p.authors.slice(0, 4).join(", ")}
+                {p.authors.length > 4 && ` +${p.authors.length - 4} more`}
+              </p>
+              <p className="line-clamp-3 text-sm text-muted-foreground">{p.summary}</p>
+              <div className="mt-auto flex gap-2 pt-2">
+                <Button size="sm" variant="outline" className="gap-1.5" asChild>
+                  <a href={p.absUrl} target="_blank" rel="noopener noreferrer">
+                    <BookOpen className="h-3.5 w-3.5" /> Abstract
+                  </a>
+                </Button>
+                <Button size="sm" variant="outline" className="gap-1.5" asChild>
+                  <a href={p.pdfUrl} target="_blank" rel="noopener noreferrer">
+                    PDF <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                </Button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const Library = () => {
+  const [tab, setTab] = useState("chats");
+
+  return (
+    <AppShell
+      header={
+        <div className="shrink-0 border-b border-border/60 bg-background px-4 py-4 sm:px-6">
+          <h1 className="flex items-center gap-2 font-display text-xl font-semibold tracking-tight sm:text-2xl">
+            <LibraryBig className="h-5 w-5" /> Library
+          </h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">Chats and research papers, side by side</p>
+        </div>
+      }
+    >
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-5 sm:px-6 sm:py-6">
+        <Tabs value={tab} onValueChange={setTab}>
+          <TabsList>
+            <TabsTrigger value="chats" className="gap-1.5">
+              <MessagesSquare className="h-4 w-4" /> Chats
+            </TabsTrigger>
+            <TabsTrigger value="arxiv" className="gap-1.5">
+              <BookOpen className="h-4 w-4" /> arXiv
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        {tab === "chats" ? <ChatsTab /> : <ArxivTab />}
+      </div>
+    </AppShell>
   );
 };
 
